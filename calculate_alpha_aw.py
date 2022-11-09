@@ -1,8 +1,9 @@
 # simplified alpha calculation from Nusselt correlation for BA Gertenbach
 
-def alpha_inside_tube(re, pr, lambda_fluid, d_i):
+def alpha_inside_tube(re: object, pr: object, lambda_fluid: object, d_i: object) -> object:
     """
     calculates the heat transfer coefficient for inner tube, only turbulent case
+    :rtype: object
     :param re: Reynoldsnumber, dimensionless
     :param pr: Prandtlnumber, dimensionless
     :param lambda_fluid: thermal conductivity of fluid, W/(Km)
@@ -11,7 +12,7 @@ def alpha_inside_tube(re, pr, lambda_fluid, d_i):
     """
     if re < 10000:
         print("ERROR: only applicable for turbulent flow")
-    nu = 0.023 * re ** (4/5) * pr ** 0.3                # 0.3 for cooling inner fluid
+    nu = 0.023 * re ** (4/5) * pr ** 0.3                # 0.3 for cooling inner fluidtl-
     alpha = nu * lambda_fluid / d_i
     return alpha
 

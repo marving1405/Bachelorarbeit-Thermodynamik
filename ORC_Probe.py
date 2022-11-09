@@ -5,40 +5,102 @@ Created on Thu Nov  3 16:24:32 2022
 @author: marvi
 """
 
-import CoolProp.CoolProp as CP
+import numpy as np
+from calculate_alpha_aw import alpha_inside_tube, alpha_outside_tube
 
 # Pumpe
-p1 = 100000
-#T1 = input('Bitte geben Sie die Starttemperatur ein: ')
-etaP = float(input('Bitte geben Sie den isentropen Pumpenwirkungsgrad ein: '))
+"""
+Zustand 1 so gewählt, dass Fluid bei 1 bar und unterkühlt vorliegt
 
-# Berechnung der zu verrichtenden Verdichterarbeit
-# Eintrittszustand bei 1 bar überhitzter Dampf
+"""
+p1 = 100 #kPa
+T1 = 230.74 #Kelvin
+etaP = 0.9
+
+# Berechnung der zu verrichtenden Pumpenarbeit
+# Eintrittszustand bei 1 bar unterkühlte Flüssigkeit
 
 # Import Stoffdaten
 from CoolProp.CoolProp import PropsSI
-T1_min = -42.38 + 273.15
-#T1 = PropsSI('T','P',p1,'Q',0,'Propane') unbekannt
-h1 = PropsSI('H','T',T1_min,'P',p1,'Propane')
-p2 = int(input('Bitte geben Sie den Enddruck in Zustand 2 bis maximal 20bar an: '))
-T3 = int(input('Bitte geben Sie die Temperatur in Zustand 3 zwischen 150-200°C an: '))
-h2 = PropsSI('H','P',p2,'T',T2,'Propane')
+
+h1 = PropsSI('H','T',T1,'P',p1,'Propane')
+p2 = 2000 #kPa
+v1 = 1 / 581.23 #PropsSI('V','P',p1,'T',T1,'Propane')
+
 # Massenstrom
-m = float(input('Bitte geben Sie den Massenstrom zwischen 5-40 g/s ein: '))
-wp = ((h2 - h1) / (etaP))
-P = (wp * m)
-
-print(P)
-
-#zustand = True
-#if zustand = false:
+m = 10E-3 #kg/s
+w_p = ((v1 * (p2-p1)) / (etaP))
+P_p = (w_p * m) #kW
+h2 = w_p + h1
+T2 = PropsSI('T','H',h2,'P',p2,'Propane')
         
 
 # Verdampfer WÜ
 
+"""
+    delta_Ta ist die Temperaturdifferenz des heißen Fluides (Mineralöl)
+    delta_Tb ist die Temperaturdifferenz des ORC-Prozessfluides
+    Betrachtet wird ein Doppelrohrwärmeübertrager
+    Als Rohrdurchmesser werden Innen 10mm und außen 14mm festgelegt
+    Innen befindet sich das Arbeitsfluid und außen das Speicherfluid
+    """
+d_i = 10E-3 #m
+d_ai = 14E-3
+d_aa = 16E-3
 
+'''
+Parameter für alpha-Berechnung
+'''
+
+dyn_viskositaet = 100 # zw. 80-120
+lambda_oel = 0.1 #W/m*K
+cp_oel = 1.9 #J/g*K
+re = rho * v * d_i / dyn_viskositaet
+pr = (dyn_viskositaet * cp_oel) / (lambda_oel)
+alpha_i = alpha_inside_tube(re,pr,lambda_oel, d_i)
+pr = PropsSI.Prandtl()
+
+lambda_fluid = 0.03
+alpha_a = alpha_outside_tube(d_ai, d_aa, lambda_fluid)
+
+
+#U = Wärmeübertragungskoeffizient
+L = 10 #m
+A = #Austauschfläche m2
+T2_heat = 200 + 273.15
+T3_heat = 100 + 273.15
+T3 = 423.15 #Mindesttemperatur ist 150°C
+
+delta_Ta = T2_heat - T3_heat
+delta_Tb = T3 - T2
+lmtd = (delta_Ta - delta_Tb) / (np.log(delta_Ta/delta_Tb))
+
+'''
+Auslegung des Wärmeübertragers 1 (Unterkühlte Flüssigkeit zu Sattdampf)
+
+'''
+R_konv_innen = 1 / A_i * alpha_i
+R_konv_aussen = 1 / A_a * alpha_a
+R_waermeleitung = np.log(d_aa/d_ai) / (2* np.pi * L * lambda_fluid)
+
+
+'''
+Auslegung des Wärmeübertragers 2 (Sattdampf zu überhitzten Dampf)
+
+'''
+#Q_zu = U * A * lmtd
 
 
 # Turbine
+
+etaT = 0.9
+p2 = p3
+p4 = p1
+#T4 =
+P_t = m * (h4 - h3) * etaT
+
+# Berechnung von h4 im isentropen Fall
+
+
 
 # Kondensator WÜ
