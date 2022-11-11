@@ -51,22 +51,22 @@ d_aa = 16E-3
 '''
 Parameter für alpha-Berechnung
 '''
-
+v = 10 #m/s
 dyn_viskositaet = 100 # zw. 80-120
 lambda_oel = 0.1 #W/m*K
 cp_oel = 1.9 #J/g*K
+rho = 880 #kg/m3
 re = rho * v * d_i / dyn_viskositaet
 pr = (dyn_viskositaet * cp_oel) / (lambda_oel)
+pr = 2000 # noch zu berechnen
 alpha_i = alpha_inside_tube(re,pr,lambda_oel, d_i)
-pr = PropsSI.Prandtl()
 
 lambda_fluid = 0.03
 alpha_a = alpha_outside_tube(d_ai, d_aa, lambda_fluid)
 
-
 #U = Wärmeübertragungskoeffizient
-L = 10 #m
-A = #Austauschfläche m2
+l = 10 #m
+#A = #Austauschfläche m2
 T2_heat = 200 + 273.15
 T3_heat = 100 + 273.15
 T3 = 423.15 #Mindesttemperatur ist 150°C
@@ -79,15 +79,29 @@ lmtd = (delta_Ta - delta_Tb) / (np.log(delta_Ta/delta_Tb))
 Auslegung des Wärmeübertragers 1 (Unterkühlte Flüssigkeit zu Sattdampf)
 
 '''
-R_konv_innen = 1 / A_i * alpha_i
-R_konv_aussen = 1 / A_a * alpha_a
-R_waermeleitung = np.log(d_aa/d_ai) / (2* np.pi * L * lambda_fluid)
-
-
+A_i = 2 * np.pi * d_i/2 * l
+A_a = 2 * np.pi * d_ai/2 * l
+R_konv_innen1 = 1 / A_i * alpha_i
+R_konv_aussen1 = 1 / A_a * alpha_a
+R_waermeleitung1 = np.log(d_aa/d_ai) / (2* np.pi * l * lambda_fluid)
+T_sattdampf = PropsSI('T','P',p2,'Q',1,'Propane')
+delta_T1 = T2 - T_sattdampf
+R_ges1 = R_konv_innen1 + R_konv_aussen1 + R_waermeleitung1
+Q_zu1 = (1 / R_ges1) * delta_T1
 '''
 Auslegung des Wärmeübertragers 2 (Sattdampf zu überhitzten Dampf)
 
 '''
+h3_heat = PropsSI('H','T',T3_heat,'P',p2,'Propane')
+
+R_konv_innen2 = 1 / A_i * alpha_i
+R_konv_aussen2 = 1 / A_a * alpha_a
+R_waermeleitung2 = np.log(d_aa/d_ai) / (2* np.pi * l * lambda_fluid)
+T_uedampf = PropsSI('T','H',h3_heat,'P',p2,'Propane')
+delta_T2 = T_uedampf - T_sattdampf
+R_ges2 = R_konv_innen2 + R_konv_aussen2 + R_waermeleitung2
+Q_zu2 = (1 / R_ges2) * delta_T2
+
 #Q_zu = U * A * lmtd
 
 
