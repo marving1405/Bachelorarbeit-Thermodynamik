@@ -89,7 +89,7 @@ A_i = 2 * np.pi * d_i/2 * l/3
 A_a = 2 * np.pi * d_ai/2 * l/3
 R_konv_innen1 = 1 / A_i * alpha_i
 R_konv_aussen1 = 1 / A_a * alpha_a
-R_waermeleitung1 = np.log(d_aa/d_ai) / (2* np.pi * l * lambda_fluid)
+R_waermeleitung1 = np.log(d_aa/d_ai) / (2 * np.pi * l * lambda_fluid)
 T_siedend = PropsSI('T','P',p2,'Q',0,fluid)
 delta_T1 = T2 - T_siedend
 R_ges1 = R_konv_innen1 + R_konv_aussen1 + R_waermeleitung1
@@ -108,7 +108,7 @@ R_waermeleitung2 = np.log(d_aa/d_ai) / (2* np.pi * l * lambda_fluid)
 T_sattdampf = PropsSI('T','P',p2,'Q',1,fluid)
 delta_T2 = T_siedend - T_sattdampf
 R_ges2 = R_konv_innen1 + R_konv_aussen1 + R_waermeleitung1
-Q_zu2 = (1 / R_ges2) * delta_T1
+Q_zu2 = (1 / R_ges2) * delta_T2
 '''
 Auslegung des Wärmeübertragers 3 (Sattdampf zu überhitzten Dampf)
 
@@ -119,8 +119,8 @@ R_konv_aussen3 = 1 / A_a * alpha_a
 R_waermeleitung3 = np.log(d_aa/d_ai) / (2* np.pi * l * lambda_fluid)
 T_uedampf = PropsSI('T','H',h3_heat,'P',p2,fluid)
 delta_T3 = T_sattdampf - T_uedampf
-R_ges3 = R_konv_innen2 + R_konv_aussen2 + R_waermeleitung2
-Q_zu3 = (1 / R_ges3) * delta_T2
+R_ges3 = R_konv_innen3 + R_konv_aussen3 + R_waermeleitung3
+Q_zu3 = (1 / R_ges3) * delta_T3
 
 # Summe der zuzuführenden Waerme
 
@@ -139,3 +139,13 @@ P_t = m * (h4 - h3_heat) * etaT
 
 
 # Kondensator WÜ
+
+A_i = 2 * np.pi * d_i/2 * l/3
+A_a = 2 * np.pi * d_ai/2 * l/3
+R_konv_innen1 = 1 / A_i * alpha_i
+R_konv_aussen1 = 1 / A_a * alpha_a
+R_waermeleitung1 = np.log(d_aa/d_ai) / (2* np.pi * l * lambda_fluid)
+T_siedend = PropsSI('T','P',p2,'Q',0,fluid)
+delta_T1 = T2 - T_siedend
+R_ges1 = R_konv_innen1 + R_konv_aussen1 + R_waermeleitung1
+Q_zu1 = (1 / R_ges1) * delta_T1
