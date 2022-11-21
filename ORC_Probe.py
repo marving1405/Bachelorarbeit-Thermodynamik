@@ -79,7 +79,7 @@ T3 = 423.15 #Mindesttemperatur ist 150°C max. 200°C
 
 delta_Ta = T2_heat - T3_heat
 delta_Tb = T3 - T2
-lmtd = (delta_Ta - delta_Tb) / (np.log(delta_Ta/delta_Tb))
+#lmtd = (delta_Ta - delta_Tb) / (np.log(delta_Ta/delta_Tb))
 
 '''
 Auslegung des Wärmeübertragers 1 (Unterkühlte Flüssigkeit zu siedender Flüssigkeit)
@@ -125,7 +125,7 @@ Q_zu3 = (1 / R_ges3) * delta_T2
 # Summe der zuzuführenden Waerme
 
 Q_zu_ges = Q_zu1 + Q_zu2 + Q_zu3
-Q_zu_ges = alpha_i * A_i * lmtd
+#Q_zu_ges = alpha_i * A_i * lmtd
 
 
 # Turbine
