@@ -13,7 +13,7 @@ fluid = "REFPROP::PROPANE"
 Zustand 1 so gewählt, dass Fluid bei 1 bar und unterkühlt vorliegt
 
 """
-p1 = 100000 #Pa
+p1 = 100 #kPa
 T1 = 230.74 #Kelvin
 etaP = 0.9
 
@@ -24,13 +24,13 @@ etaP = 0.9
 from CoolProp.CoolProp import PropsSI
 
 h1 = PropsSI('H','T',T1,'P',p1,fluid)
-p2 = 2000000 #Pa
-v1 = 1 / PropsSI('D','P',p1,'T',T1,fluid)
+p2 = 2000 #kPa
+v1 = 1 / (PropsSI('D','P',p1,'T',T1,fluid)) #m3/kg EINHEITENPROBLEM
 
 # Massenstrom
 m = 10E-3 #kg/s
-w_p = (v1 * (p2-p1))
-P_p = (w_p * m) / (etaP) #W
+w_p = (v1 * (p2-p1)) #J EINHEITENPROBLEM
+P_p = (w_p * m) / (etaP) #W???
 h2 = w_p + h1
 T2 = PropsSI('T','H',h2,'P',p2,fluid)
         
@@ -76,12 +76,15 @@ l = 9 #m
 T2_heat = 200 + 273.15
 T3_heat = 100 + 273.15
 T3 = 423.15 #Mindesttemperatur ist 150°C max. 200°C
+#p2 = p3
+h3 = PropsSI('H','T',T3,'P',p2,fluid)
 
 delta_Ta = T2_heat - T3_heat
 delta_Tb = T3 - T2
 #lmtd = (delta_Ta - delta_Tb) / (np.log(delta_Ta/delta_Tb))
 
 '''
+# Temperaturen nochmal updaten -> was kühlt wie sehr ab?
 Auslegung des Wärmeübertragers 1 (Unterkühlte Flüssigkeit zu siedender Flüssigkeit)
 
 '''
@@ -118,7 +121,7 @@ R_konv_innen3 = 1 / A_i * alpha_i
 R_konv_aussen3 = 1 / A_a * alpha_a
 R_waermeleitung3 = np.log(d_aa/d_ai) / (2* np.pi * l * lambda_fluid)
 T_uedampf = PropsSI('T','H',h3_heat,'P',p2,fluid)
-delta_T3 = T_sattdampf - T_uedampf
+delta_T3 = T_uedampf - T_sattdampf #Enthalpie als Ansatz
 R_ges3 = R_konv_innen3 + R_konv_aussen3 + R_waermeleitung3
 Q_zu3 = (1 / R_ges3) * delta_T3
 
@@ -130,22 +133,24 @@ Q_zu_ges = Q_zu1 + Q_zu2 + Q_zu3
 
 # Turbine
 
-s3 = PropsSI('S','H',h3_heat,'P',p2,fluid)
+s3 = PropsSI('S','H',h3,'P',p2,fluid)
 etaT = 0.8
 p4 = p1
 h4 = PropsSI('H','S',s3,'P',p4,fluid)
-P_t = m * (h4 - h3_heat) * etaT
+T4 = PropsSI('T','P',p4,'H',h4,fluid)
+P_t = m * (h4 - h3) * etaT
 
 
 
 # Kondensator WÜ
+# Ist hier das alpha gleich wie beim Verdampfer? Und Einheiten der Wärme
 
-A_i = 2 * np.pi * d_i/2 * l/3
-A_a = 2 * np.pi * d_ai/2 * l/3
-R_konv_innen1 = 1 / A_i * alpha_i
-R_konv_aussen1 = 1 / A_a * alpha_a
-R_waermeleitung1 = np.log(d_aa/d_ai) / (2* np.pi * l * lambda_fluid)
-T_siedend = PropsSI('T','P',p2,'Q',0,fluid)
-delta_T1 = T2 - T_siedend
-R_ges1 = R_konv_innen1 + R_konv_aussen1 + R_waermeleitung1
-Q_zu1 = (1 / R_ges1) * delta_T1
+A_i = 2 * np.pi * d_i/2 * l
+A_a = 2 * np.pi * d_ai/2 * l
+R_konv_innen = 1 / A_i * alpha_i
+R_konv_aussen = 1 / A_a * alpha_a
+R_waermeleitung = np.log(d_aa/d_ai) / (2 * np.pi * l * lambda_fluid)
+
+delta_T = T4 - T1
+R_ges = R_konv_innen1 + R_konv_aussen1 + R_waermeleitung1
+Q_ab = (1 / R_ges) * delta_T1
