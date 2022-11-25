@@ -13,8 +13,8 @@ fluid = "REFPROP::PROPANE"
 Zustand 1 so gewählt, dass Fluid bei 1 bar und unterkühlt vorliegt
 
 """
-p1 = 100 #kPa
-T1 = 230.74 #Kelvin
+p1 = 100000 #kPa
+T1 = 229 #Kelvin
 etaP = 0.9
 
 # Berechnung der zu verrichtenden Pumpenarbeit
@@ -24,7 +24,7 @@ etaP = 0.9
 from CoolProp.CoolProp import PropsSI
 
 h1 = PropsSI('H','T',T1,'P',p1,fluid)
-p2 = 2000 #kPa
+p2 = 2000000 #Pa
 v1 = 1 / (PropsSI('D','P',p1,'T',T1,fluid)) #m3/kg EINHEITENPROBLEM
 
 # Massenstrom
@@ -93,42 +93,48 @@ A_a = 2 * np.pi * d_ai/2 * l/3
 R_konv_innen1 = 1 / A_i * alpha_i
 R_konv_aussen1 = 1 / A_a * alpha_a
 R_waermeleitung1 = np.log(d_aa/d_ai) / (2 * np.pi * l * lambda_fluid)
-T_siedend = PropsSI('T','P',p2,'Q',0,fluid)
-delta_T1 = T2 - T_siedend
+
+T2_siedend = PropsSI('T','P',p2,'Q',0,fluid)
+delta_T2_1 = T2_siedend - T2
 R_ges1 = R_konv_innen1 + R_konv_aussen1 + R_waermeleitung1
-Q_zu1 = (1 / R_ges1) * delta_T1
+Q_zu1 = (1 / R_ges1) * delta_T2_1
 
 
 
 '''
 Auslegung des Wärmeübertragers 2 (siedende Flüssigkeit zu Sattdampf)
-
+isotherme Zustandsänderung, daher über 1.HS
 '''
 
-R_konv_innen2 = 1 / A_i * alpha_i
-R_konv_aussen2 = 1 / A_a * alpha_a
-R_waermeleitung2 = np.log(d_aa/d_ai) / (2* np.pi * l * lambda_fluid)
-T_sattdampf = PropsSI('T','P',p2,'Q',1,fluid)
-delta_T2 = T_siedend - T_sattdampf
-R_ges2 = R_konv_innen1 + R_konv_aussen1 + R_waermeleitung1
-Q_zu2 = (1 / R_ges2) * delta_T2
+alpha_i_zweiphasig = 600
+alpha_a_zweiphasig = 400
+# TODO andere alphas aus VDI Waermeatlas ok?
+R_konv_innen2 = 1 / A_i * alpha_i_zweiphasig
+R_konv_aussen2 = 1 / A_a * alpha_a_zweiphasig
+R_waermeleitung2 = np.log(d_aa/d_ai) / (2 * np.pi * l * lambda_fluid)
+R_ges2 = R_konv_innen2 + R_konv_aussen2 + R_waermeleitung2
+h2_sattdampf = PropsSI('H','P',p2,'Q',1,fluid)
+h2_siedend = PropsSI('H','P',p2,'T',T2_siedend,fluid)
+Q_zu2 = h2_sattdampf - h2_siedend
+
 '''
 Auslegung des Wärmeübertragers 3 (Sattdampf zu überhitzten Dampf)
 
 '''
-h3_heat = PropsSI('H','T',T3_heat,'P',p2,fluid)
+
 R_konv_innen3 = 1 / A_i * alpha_i
 R_konv_aussen3 = 1 / A_a * alpha_a
 R_waermeleitung3 = np.log(d_aa/d_ai) / (2* np.pi * l * lambda_fluid)
-T_uedampf = PropsSI('T','H',h3_heat,'P',p2,fluid)
-delta_T3 = T_uedampf - T_sattdampf #Enthalpie als Ansatz
-R_ges3 = R_konv_innen3 + R_konv_aussen3 + R_waermeleitung3
-Q_zu3 = (1 / R_ges3) * delta_T3
 
-# Summe der zuzuführenden Waerme
+h3 = PropsSI('H','T',T3,'P',p2,fluid)
+T2_sattdampf = PropsSI('T','P',p2,'Q',1,fluid)
+
+R_ges3 = R_konv_innen3 + R_konv_aussen3 + R_waermeleitung3
+delta_T2_2 = T3 - T2_sattdampf
+Q_zu3 = (1 / R_ges3) * delta_T2_2
+
 
 Q_zu_ges = Q_zu1 + Q_zu2 + Q_zu3
-#Q_zu_ges = alpha_i * A_i * lmtd
 
 
 # Turbine
@@ -138,11 +144,12 @@ etaT = 0.8
 p4 = p1
 h4 = PropsSI('H','S',s3,'P',p4,fluid)
 T4 = PropsSI('T','P',p4,'H',h4,fluid)
+w_t = (h4 - h3) * etaT
 P_t = m * (h4 - h3) * etaT
 
 
 
-# Kondensator WÜ
+# Kondensator 1
 # Ist hier das alpha gleich wie beim Verdampfer? Und Einheiten der Wärme
 
 A_i = 2 * np.pi * d_i/2 * l
@@ -151,6 +158,21 @@ R_konv_innen = 1 / A_i * alpha_i
 R_konv_aussen = 1 / A_a * alpha_a
 R_waermeleitung = np.log(d_aa/d_ai) / (2 * np.pi * l * lambda_fluid)
 
-delta_T = T4 - T1
+# Kondensator 2
+# Ist hier das alpha gleich wie beim Verdampfer? Und Einheiten der Wärme
+
+A_i = 2 * np.pi * d_i/2 * l
+A_a = 2 * np.pi * d_ai/2 * l
+R_konv_innen = 1 / A_i * alpha_i
+R_konv_aussen = 1 / A_a * alpha_a
+R_waermeleitung = np.log(d_aa/d_ai) / (2 * np.pi * l * lambda_fluid)
+
+delta_T41 = T4 - T1
 R_ges = R_konv_innen1 + R_konv_aussen1 + R_waermeleitung1
-Q_ab = (1 / R_ges) * delta_T1
+Q_ab = (1 / R_ges) * delta_T41
+
+
+"Berechnung thermischer Wirkungsgrad"
+
+w_netto = abs(w_t + w_p)
+eta_th = w_netto / (Q_zu_ges)
