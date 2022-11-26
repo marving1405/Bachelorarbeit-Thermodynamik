@@ -27,6 +27,7 @@ h1 = PropsSI('H','T',T1,'P',p1,fluid)
 p2 = 2000000 #Pa
 v1 = 1 / (PropsSI('D','P',p1,'T',T1,fluid)) #m3/kg EINHEITENPROBLEM
 
+#TODO for-Schleife implementieren
 # Massenstrom
 m = 10E-3 #kg/s
 w_p = (v1 * (p2-p1)) #J EINHEITENPROBLEM
@@ -176,3 +177,4 @@ Q_ab = (1 / R_ges) * delta_T41
 
 w_netto = abs(w_t + w_p)
 eta_th = w_netto / (Q_zu_ges)
+print(eta_th)
