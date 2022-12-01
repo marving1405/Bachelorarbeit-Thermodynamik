@@ -209,11 +209,11 @@ for m in np.arange(5E-3, 40E-3, 1E-3):
     #print(eta_th)
 
     # m = list(range(5E-3,40E-3,1E-3)) #kg/s
-    plt.plot(m, eta_th, color='black', marker='.', linestyle='-')
+    plt.plot(m, w_netto, color='black', marker='.', linestyle='-')
     plt.xlabel('m', fontsize=16)
-    plt.ylabel('eta_th', fontsize=16)
+    plt.ylabel('w_netto', fontsize=16)
 
-plt.ylim(0,1)
+plt.ylim(0,200000)
 plt.legend(loc='best')
 plt.show()
 
