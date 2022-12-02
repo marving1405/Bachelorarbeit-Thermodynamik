@@ -4,6 +4,9 @@ Created on Thu Nov  3 16:24:32 2022
 
 @author: marvi
 """
+import json, CoolProp.CoolProp as CP
+CP.set_config_string(CP.ALTERNATIVE_REFPROP_PATH, 'c:\\Program Files\\REFPROP\\')
+from CoolProp.CoolProp import PropsSI
 
 
 # m = list(range(5E-3,40E-3,1E-3)) #kg/s
@@ -13,7 +16,9 @@ import matplotlib.pyplot as plt
 
 from calculate_alpha_aw import alpha_inside_tube, alpha_outside_tube
 for T3 in np.arange(423.15,473.15,1):
-    fluid = "REFPROP::PROPANE"
+    #fluid = "REFPROP::PROPANE"
+    fluid = "PROPANE"
+
     m = 5E-3
     # Pumpe
     """
@@ -29,7 +34,7 @@ for T3 in np.arange(423.15,473.15,1):
 
     # Import Stoffdaten
     #import CoolProp.CoolProp as CP
-    from CoolProp.CoolProp import PropsSI
+    #from CoolProp.CoolProp import PropsSI
 
     h1 = PropsSI('H','T',T1,'P',p1,fluid)
     p2 = 2000000 #Pa
@@ -106,7 +111,8 @@ for T3 in np.arange(423.15,473.15,1):
     T2_siedend = PropsSI('T','P',p2,'Q',0,fluid)
     delta_T2_1 = T2_siedend - T2
     R_ges1 = R_konv_innen1 + R_konv_aussen1 + R_waermeleitung1
-    Q_zu1 = (1 / R_ges1) * delta_T2_1
+    cp_fluid_1 = PropsSI('CPMASS', 'T', T2, 'P', p2, fluid)
+    Q_zu1 = m * cp_fluid_1 * delta_T2_1
 
 
 
@@ -124,7 +130,7 @@ for T3 in np.arange(423.15,473.15,1):
     R_ges2 = R_konv_innen2 + R_konv_aussen2 + R_waermeleitung2
     h2_sattdampf = PropsSI('H','P',p2,'Q',1,fluid)
     h2_siedend = PropsSI('H','P',p2,'T',T2_siedend,fluid)
-    Q_zu2 = h2_sattdampf - h2_siedend
+    Q_zu2 = m * (h2_sattdampf - h2_siedend)
 
     '''
     Auslegung des Wärmeübertragers 3 (Sattdampf zu überhitzten Dampf)
@@ -156,7 +162,8 @@ for T3 in np.arange(423.15,473.15,1):
 
     R_ges3 = R_konv_innen3 + R_konv_aussen3 + R_waermeleitung3
     delta_T2_2 = T3 - T2_sattdampf
-    Q_zu3 = (1 / R_ges3) * delta_T2_2
+    cp_fluid_3 = PropsSI('CPMASS', 'T', T2_siedend, 'P', p2, fluid)
+    Q_zu3 = m * cp_fluid_3 * delta_T2_2
 
 
     Q_zu_ges = Q_zu1 + Q_zu2 + Q_zu3
