@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 
 from calculate_alpha_aw import alpha_inside_tube, alpha_outside_tube
 
-for p2 in np.arange(1000000, 2000000, 100):
+for p2 in np.arange(1000000, 2000000, 500):
     fluid = "REFPROP::PROPANE"
     m = 5E-3
     # Pumpe
