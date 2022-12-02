@@ -28,6 +28,7 @@ for T3 in np.arange(423.15,473.15,1):
     # Eintrittszustand bei 1 bar unterkühlte Flüssigkeit
 
     # Import Stoffdaten
+    #import CoolProp.CoolProp as CP
     from CoolProp.CoolProp import PropsSI
 
     h1 = PropsSI('H','T',T1,'P',p1,fluid)
