@@ -11,9 +11,9 @@ import matplotlib.pyplot as plt
 
 from calculate_alpha_aw import alpha_inside_tube, alpha_outside_tube
 
-for p2 in np.arange(1000000, 2000000, 500):
+for p2 in np.arange(500000, 2000000, 500):
     fluid = "REFPROP::PROPANE"
-    m = 5E-3
+
     # Pumpe
     """
     Zustand 1 so gewählt, dass Fluid bei 1 bar und unterkühlt vorliegt
@@ -37,7 +37,7 @@ for p2 in np.arange(1000000, 2000000, 500):
     # Massenstrom
 
     m = 10E-3
-    w_p = (v1 * (p2 - p1))  # J EINHEITENPROBLEM
+    w_p = (v1 * (p2 - p1))  #J
     P_p = (w_p * m) / (etaP)  # W???
     h2 = w_p + h1
     T2 = PropsSI('T', 'H', h2, 'P', p2, fluid)
@@ -101,7 +101,8 @@ for p2 in np.arange(1000000, 2000000, 500):
     T2_siedend = PropsSI('T', 'P', p2, 'Q', 0, fluid)
     delta_T2_1 = T2_siedend - T2
     R_ges1 = R_konv_innen1 + R_konv_aussen1 + R_waermeleitung1
-    Q_zu1 = (1 / R_ges1) * delta_T2_1
+    cp_fluid_1 = PropsSI('CPMASS', 'T', T2, 'P', p2, fluid)
+    Q_zu1 = m * cp_fluid_1 * delta_T2_1
 
     '''
     Auslegung des Wärmeübertragers 2 (siedende Flüssigkeit zu Sattdampf)
@@ -117,7 +118,7 @@ for p2 in np.arange(1000000, 2000000, 500):
     R_ges2 = R_konv_innen2 + R_konv_aussen2 + R_waermeleitung2
     h2_sattdampf = PropsSI('H', 'P', p2, 'Q', 1, fluid)
     h2_siedend = PropsSI('H', 'P', p2, 'T', T2_siedend, fluid)
-    Q_zu2 = h2_sattdampf - h2_siedend
+    Q_zu2 = m * (h2_sattdampf - h2_siedend)
 
     '''
     Auslegung des Wärmeübertragers 3 (Sattdampf zu überhitzten Dampf)
@@ -146,7 +147,8 @@ for p2 in np.arange(1000000, 2000000, 500):
 
     R_ges3 = R_konv_innen3 + R_konv_aussen3 + R_waermeleitung3
     delta_T2_2 = T3 - T2_sattdampf
-    Q_zu3 = (1 / R_ges3) * delta_T2_2
+    cp_fluid_3 = PropsSI('CPMASS', 'T', T2_siedend, 'P', p2, fluid)
+    Q_zu3 = m * cp_fluid_3 * delta_T2_2
 
     Q_zu_ges = Q_zu1 + Q_zu2 + Q_zu3
 

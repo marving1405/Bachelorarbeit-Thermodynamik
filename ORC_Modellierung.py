@@ -19,7 +19,7 @@ for T3 in np.arange(423.15,473.15,1):
     fluid = "REFPROP::PROPANE"
     #fluid = "PROPANE"
 
-    m = 5E-3
+
     # Pumpe
     """
     Zustand 1 so gewählt, dass Fluid bei 1 bar und unterkühlt vorliegt
@@ -70,15 +70,13 @@ for T3 in np.arange(423.15,473.15,1):
     #U = Wärmeübertragungskoeffizient
      #m
     #A = #Austauschfläche m2
-    T2_heat = 200 + 273.15
-    T3_heat = 100 + 273.15
+    Te_1 = 200 + 273.15
+    #Ta_1 = 100 + 273.15
     #T3 = 423.15 #Mindesttemperatur ist 150°C max. 200°C
     #p2 = p3
     h3 = PropsSI('H','T',T3,'P',p2,fluid)
 
-    delta_Ta = T2_heat - T3_heat
-    delta_Tb = T3 - T2
-    #lmtd = (delta_Ta - delta_Tb) / (np.log(delta_Ta/delta_Tb))
+
 
     '''
     # Temperaturen nochmal updaten -> was kühlt wie sehr ab?
@@ -89,7 +87,7 @@ for T3 in np.arange(423.15,473.15,1):
     '''
     Parameter für alpha-Berechnung für Wärmeübertrager 1
     '''
-    A_quer = np.pi * d_i**2 #m2
+    A_quer = np.pi * (d_i/2)**2 #m2
     rho_1 = PropsSI('D','T',T2,'P',p2,fluid)  #kg/m3
     v_1 = m / rho_1
     c_1 = v_1 / A_quer
@@ -115,6 +113,15 @@ for T3 in np.arange(423.15,473.15,1):
     Q_zu1 = m * cp_fluid_1 * delta_T2_1
 
 
+    lmtd1 = Q_zu1 / alpha_a_1 * A_a
+    from sympy.solvers import solve
+    from sympy import Symbol
+
+    #Ta_1 = Symbol('Ta_1')
+    #solve(lmtd1 = (Te_1 - Ta_1 - delta_T2_1) / (np.log(Te_1 - Ta_1 / delta_T2_1)), Ta_1)
+    #Q_zu1 = Q_ab1
+    #delta_T1 = Te_1 - Ta_1
+    #lmtd1 = (delta_T1 - delta_T2_1) / (np.log(delta_T1 / delta_T2_1))
 
     '''
     Auslegung des Wärmeübertragers 2 (siedende Flüssigkeit zu Sattdampf)
@@ -139,16 +146,18 @@ for T3 in np.arange(423.15,473.15,1):
     Parameter für alpha-Berechnung für Wärmeübertrager 3
     '''
 
+    h3 = PropsSI('H','T',T3,'P',p2,fluid)
+    T2_sattdampf = PropsSI('T','P',p2,'Q',1,fluid)
 
-    rho_3 = PropsSI('D','T',T2_heat,'P',p2,fluid)  #kg/m3
+    rho_3 = PropsSI('D','T',T2_sattdampf,'P',p2,fluid)  #kg/m3
     v_3 = m / rho_3
     c_3 = v_3 / A_quer
-    viscosity_3 = PropsSI('VISCOSITY','T',T2_heat,'P',p2,fluid)
+    viscosity_3 = PropsSI('VISCOSITY','T',T2_sattdampf,'P',p2,fluid)
 
 
     re_3 = rho_3 * c_3 * d_i / viscosity_3
-    lambda_fluid_3 = PropsSI('CONDUCTIVITY','T',T2_heat,'P',p2,fluid)
-    pr_3 = PropsSI('PRANDTL','T',T2_heat,'P',p2,fluid)
+    lambda_fluid_3 = PropsSI('CONDUCTIVITY','T',T2_sattdampf,'P',p2,fluid)
+    pr_3 = PropsSI('PRANDTL','T',T2_sattdampf,'P',p2,fluid)
     alpha_i_3 = alpha_inside_tube(re_3,pr_3,lambda_fluid_3, d_i)
     alpha_a_3 = alpha_outside_tube(d_ai, d_aa, lambda_fluid_3)
 
@@ -157,8 +166,6 @@ for T3 in np.arange(423.15,473.15,1):
     R_konv_aussen3 = 1 / A_a * alpha_a_3
     R_waermeleitung3 = np.log(d_aa/d_ai) / (2* np.pi * l * lambda_fluid_3)
 
-    h3 = PropsSI('H','T',T3,'P',p2,fluid)
-    T2_sattdampf = PropsSI('T','P',p2,'Q',1,fluid)
 
     R_ges3 = R_konv_innen3 + R_konv_aussen3 + R_waermeleitung3
     delta_T2_2 = T3 - T2_sattdampf
