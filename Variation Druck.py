@@ -204,8 +204,8 @@ for p2 in np.arange(1000000, 2000000, 500):
 
     "Berechnung thermischer Wirkungsgrad"
 
-    w_netto = abs(w_t + w_p)
-    eta_th = w_netto / (Q_zu_ges)
+    P_netto = abs(P_t + P_p)
+    eta_th = P_netto / (Q_zu_ges)
     #print(eta_th)
 
     # m = list(range(5E-3,40E-3,1E-3)) #kg/s

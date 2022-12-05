@@ -5,7 +5,7 @@ Created on Thu Nov  3 16:24:32 2022
 @author: marvi
 """
 import json, CoolProp.CoolProp as CP
-CP.set_config_string(CP.ALTERNATIVE_REFPROP_PATH, 'c:\\Program Files\\REFPROP\\')
+CP.set_config_string(CP.ALTERNATIVE_REFPROP_PATH, 'C:\\Program Files (x86)\\REFPROP\\')
 from CoolProp.CoolProp import PropsSI
 
 
@@ -16,8 +16,8 @@ import matplotlib.pyplot as plt
 
 from calculate_alpha_aw import alpha_inside_tube, alpha_outside_tube
 for T3 in np.arange(423.15,473.15,1):
-    #fluid = "REFPROP::PROPANE"
-    fluid = "PROPANE"
+    fluid = "REFPROP::PROPANE"
+    #fluid = "PROPANE"
 
     m = 5E-3
     # Pumpe
@@ -226,15 +226,16 @@ for T3 in np.arange(423.15,473.15,1):
 
     delta_T41 = T4 - T1
     R_ges = R_konv_innen1 + R_konv_aussen1 + R_waermeleitung1
-    Q_ab = (1 / R_ges) * delta_T41
+    cp_fluid_41 = PropsSI('CPMASS', 'T', T4, 'P', p1, fluid)
+    Q_ab = m * cp_fluid_41 * delta_T41
 
 
 
 
     "Berechnung thermischer Wirkungsgrad"
 
-    w_netto = abs(w_t + w_p)
-    eta_th = w_netto / (Q_zu_ges)
+    P_netto = abs(P_t + P_p)
+    eta_th = P_netto / (Q_zu_ges)
     #print(eta_th)
 
     #m = list(range(5E-3,40E-3,1E-3)) #kg/s
@@ -242,7 +243,7 @@ for T3 in np.arange(423.15,473.15,1):
     plt.xlabel('T3', fontsize=16)
     plt.ylabel('eta_th', fontsize=16)
 
-plt.legend(loc='best')
+#plt.legend(loc='best')
 plt.show()
 
 
