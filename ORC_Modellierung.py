@@ -85,7 +85,7 @@ for T3 in np.arange(423.15,473.15,1):
     '''
 
     '''
-    Parameter für alpha-Berechnung für Wärmeübertrager 1
+    Parameter für alpha-Berechnung für Wärmeübertrager 1 (Rekuperator)
     '''
     A_quer = np.pi * (d_i/2)**2 #m2
     rho_1 = PropsSI('D','T',T2,'P',p2,fluid)  #kg/m3
