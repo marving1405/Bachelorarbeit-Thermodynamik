@@ -114,7 +114,7 @@ R_waermeleitung1 = np.log(d_aa/d_ai) / (2 * np.pi * l * lambda_fluid_1)
 T2_siedend = PropsSI('T','P',p2,'Q',0,fluid)
 delta_T2_1 = T2_siedend - T2
 R_ges1 = R_konv_innen1 + R_konv_aussen1 + R_waermeleitung1
-cp_fluid_1 = PropsSI('CPMASS', 'T', T2, 'P', p2, fluid)
+cp_fluid_1 = PropsSI('C', 'T', T2, 'P', p2, fluid)
 Q_zu1 = m * cp_fluid_1 * delta_T2_1
 
 
@@ -180,7 +180,7 @@ R_waermeleitung3 = np.log(d_aa/d_ai) / (2* np.pi * l * lambda_fluid_3)
 
 R_ges3 = R_konv_innen3 + R_konv_aussen3 + R_waermeleitung3
 delta_T2_2 = T3 - T2_sattdampf
-cp_fluid_3 = PropsSI('CPMASS', 'T', T2_siedend, 'P', p2, fluid)
+cp_fluid_3 = PropsSI('C', 'T', T2_siedend, 'P', p2, fluid)
 Q_zu3 = m * cp_fluid_3 * delta_T2_2
 
 
@@ -247,7 +247,7 @@ R_waermeleitung = np.log(d_aa/d_ai) / (2 * np.pi * l * lambda_fluid_k2)
 
 delta_T41 = T4 - T1
 R_ges = R_konv_innen1 + R_konv_aussen1 + R_waermeleitung1
-cp_fluid_41 = PropsSI('CPMASS', 'T', T4, 'P', p1, fluid)
+cp_fluid_41 = PropsSI('C', 'T', T4, 'P', p1, fluid)
 Q_ab = m * cp_fluid_41 * delta_T41
 
 
