@@ -146,6 +146,11 @@ h2_siedend = PropsSI('H','P',p2,'T',T2_siedend,fluid)/1000
 Q_zu2 = m * (h2_sattdampf - h2_siedend)
 Tmittel_L = Tmittel_H - (Q_zu2/(m_oel * cp_oel))
 
+#Mitteltemperatur
+s2_siedend = PropsSI("S","P",p2,"Q",0,fluid)
+s2_sattdampf = PropsSI("S","P",p2,"Q",1,fluid)
+mitteltemperatur2 = (h2_sattdampf - h2_siedend) / (s2_sattdampf/1000 - s2_siedend/1000)
+
 
 '''
 Auslegung des Wärmeübertragers 3 (Sattdampf zu überhitzten Dampf)
