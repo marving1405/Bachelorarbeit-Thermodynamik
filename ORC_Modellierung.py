@@ -119,19 +119,16 @@ Q_zu1 = m * cp_fluid_1 * delta_T2_1
 
 
 lmtd1 = Q_zu1 / alpha_a_1 * A_a
-from sympy.solvers import solve
-from sympy import Symbol
 
-#Ta_1 = Symbol('Ta_1')
-#solve(lmtd1 = (Te_1 - Ta_1 - delta_T2_1) / (np.log(Te_1 - Ta_1 / delta_T2_1)), Ta_1)
-#Q_zu1 = Q_ab1
-#delta_T1 = Te_1 - Ta_1
-#lmtd1 = (delta_T1 - delta_T2_1) / (np.log(delta_T1 / delta_T2_1))
 
 '''
 Auslegung des Wärmeübertragers 2 (siedende Flüssigkeit zu Sattdampf)
 isotherme Zustandsänderung, daher über 1.HS
 '''
+
+
+
+
 # TODO keine Temperaturdifferenz -> inwiefern therm. Widerstände einbinden?
 lambda_fluid_2 = PropsSI('CONDUCTIVITY','T',T2_siedend,'P',p2,fluid)
 alpha_i_zweiphasig = 600
@@ -141,15 +138,15 @@ R_konv_innen2 = 1 / A_i * alpha_i_zweiphasig
 R_konv_aussen2 = 1 / A_a * alpha_a_zweiphasig
 R_waermeleitung2 = np.log(d_aa/d_ai) / (2 * np.pi * l * lambda_fluid_2)
 R_ges2 = R_konv_innen2 + R_konv_aussen2 + R_waermeleitung2
-h2_sattdampf = PropsSI('H','P',p2,'Q',1,fluid)/1000
-h2_siedend = PropsSI('H','P',p2,'T',T2_siedend,fluid)/1000
+h2_sattdampf = PropsSI('H','P',p2,'Q',1,fluid)
+h2_siedend = PropsSI('H','P',p2,'T',T2_siedend,fluid)
 Q_zu2 = m * (h2_sattdampf - h2_siedend)
-Tmittel_L = Tmittel_H - (Q_zu2/(m_oel * cp_oel))
+Tmittel_L = Tmittel_H - ((Q_zu2/1000)/(m_oel * cp_oel))
+
+l2 = Q_zu2 / (np.pi * d_i * alpha_i_zweiphasig * (Tmittel_H-Tmittel_L))
 
 #Mitteltemperatur
-s2_siedend = PropsSI("S","P",p2,"Q",0,fluid)
-s2_sattdampf = PropsSI("S","P",p2,"Q",1,fluid)
-mitteltemperatur2 = (h2_sattdampf - h2_siedend) / (s2_sattdampf/1000 - s2_siedend/1000)
+
 
 
 '''
@@ -158,9 +155,10 @@ Auslegung des Wärmeübertragers 3 (Sattdampf zu überhitzten Dampf)
 '''
 Parameter für alpha-Berechnung für Wärmeübertrager 3
 '''
+#from solver import solver_dTB
 Thoch_H = 180 + 273.15 #K
 Thoch_L = 110 + 273.15 #K
-
+l3 = 5 #m
 
 h3 = PropsSI('H','T',T3,'P',p2,fluid)
 T2_sattdampf = PropsSI('T','P',p2,'Q',1,fluid)
@@ -186,24 +184,52 @@ R_waermeleitung3 = np.log(d_aa/d_ai) / (2* np.pi * l * lambda_fluid_3)
 R_ges3 = R_konv_innen3 + R_konv_aussen3 + R_waermeleitung3
 delta_T2_2 = T3 - T2_sattdampf
 cp_fluid_3 = PropsSI('C', 'T', T2_siedend, 'P', p2, fluid)
-Q_zu3 = m * cp_fluid_3 * delta_T2_2
+Q_zu3 = m * (h3 - h2_sattdampf)#m * cp_fluid_3 * delta_T2_2
+dTA = Thoch_H - Thoch_L
+
+from scipy.optimize import fsolve
 
 
+def solver_dTB(Q_zu3, d_i , l3, alpha_i_3, dTA):
+
+    eq1 = Q_zu3 / (np.pi * d_i * l3 * alpha_i_3)
+    eq2 = (dTA - dTB) / (np.log(dTA / dTB))
+    return [eq1, eq2]
 
 
+dTB = fsolve(solver_dTB, (1, 1))
+print(dTB)
 
+'''
+from sympy import solve
+from sympy.solvers import symbol
+
+from sympy.solvers import nsolve
+from sympy.solvers import solveset
+
+
+dTA = Thoch_H - Thoch_L
+dTB = T3 - T2_sattdampf
+
+Q_zu3 / (np.pi * d_i * l3 * alpha_i_3) = (dTA - dTB)/(np.log(dTA/dTB)
+
+dTB = symbol('dTB')
+solve(a = (dTA-dTB)/(np.log(dTA/dTB), dTB)
+'''
 Q_zu_ges = Q_zu1 + Q_zu2 + Q_zu3
 
 
 # Turbine
 
+from isentroper_Wirkungsgrad_Expander import isentroper_Wirkungsgrad
+n = 5000
+eta_Expander = isentroper_Wirkungsgrad(m,n)
 s3 = PropsSI('S','H',h3,'P',p2,fluid)
-etaT = 0.8
 p4 = p1
 h4 = PropsSI('H','S',s3,'P',p4,fluid)
 T4 = PropsSI('T','P',p4,'H',h4,fluid)
-w_t = (h4 - h3) * etaT
-P_t = m * (h4 - h3) * etaT
+w_t = (h4 - h3) * eta_Expander
+P_t = m * (h4 - h3) * eta_Expander
 
 
 
