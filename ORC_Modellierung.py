@@ -193,8 +193,7 @@ from sympy import *
 
 
 dTB = symbols('dTB')
-eq1 = Eq(Q_zu3 / (np.pi * d_i * l3 * alpha_i_3))
-eq2 = Eq((dTA - dTB) / (np.log(dTA / dTB)))
+
 
 sol = solve([eq1, eq2], [dTB])
 print(dTB)
@@ -215,6 +214,19 @@ Q_zu3 / (np.pi * d_i * l3 * alpha_i_3) = (dTA - dTB)/(np.log(dTA/dTB)
 dTB = symbol('dTB')
 solve(a = (dTA-dTB)/(np.log(dTA/dTB), dTB)
 '''
+def eq1(dTB):
+    return ((dTA - dTB) / (np.log(dTA / dTB)))
+
+
+
+def eq2():
+    return (Q_zu3 / (np.pi * d_i * l3 * alpha_i_3))
+
+from scipy import optimize
+sol = optimize.root(eq1, [0, 0], method='hybr')
+sol.dTB
+
+
 Q_zu_ges = Q_zu1 + Q_zu2 + Q_zu3
 
 
