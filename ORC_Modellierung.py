@@ -72,7 +72,7 @@ l = 10 #m
 #A = #Austauschfläche m2
 Te_1 = 200 + 273.15
 #Ta_1 = 100 + 273.15
-T3 = 423.15 #Mindesttemperatur ist 150°C max. 200°C
+T3 = 367.456 #Mindesttemperatur ist 150°C max. 200°C
 #p2 = p3
 h3 = PropsSI('H','T',T3,'P',p2,fluid)
 
@@ -117,8 +117,9 @@ R_ges1 = R_konv_innen1 + R_konv_aussen1 + R_waermeleitung1
 cp_fluid_1 = PropsSI('C', 'T', T2, 'P', p2, fluid)
 Q_zu1 = m * cp_fluid_1 * delta_T2_1
 
-
-lmtd1 = Q_zu1 / alpha_a_1 * A_a
+Tlow_H = 60 + 273.15 #K
+Tlow_L = 30 + 273.15 #K
+l1 = Q_zu1 / (np.pi * d_i * alpha_i_1 * (Tlow_H - Tlow_L))
 
 
 '''
@@ -178,7 +179,7 @@ alpha_a_3 = alpha_outside_tube(d_ai, d_aa, lambda_fluid_3)
 
 R_konv_innen3 = 1 / A_i * alpha_i_3
 R_konv_aussen3 = 1 / A_a * alpha_a_3
-R_waermeleitung3 = np.log(d_aa/d_ai) / (2* np.pi * l * lambda_fluid_3)
+R_waermeleitung3 = np.log(d_aa/d_ai) / (2* np.pi * l3 * lambda_fluid_3)
 
 
 R_ges3 = R_konv_innen3 + R_konv_aussen3 + R_waermeleitung3
@@ -186,20 +187,18 @@ delta_T2_2 = T3 - T2_sattdampf
 cp_fluid_3 = PropsSI('C', 'T', T2_siedend, 'P', p2, fluid)
 Q_zu3 = m * (h3 - h2_sattdampf)#m * cp_fluid_3 * delta_T2_2
 dTA = Thoch_H - Thoch_L
-
+'''
 from scipy.optimize import fsolve
+from sympy import *
 
 
-def solver_dTB(Q_zu3, d_i , l3, alpha_i_3, dTA):
+dTB = symbols('dTB')
+eq1 = Eq(Q_zu3 / (np.pi * d_i * l3 * alpha_i_3))
+eq2 = Eq((dTA - dTB) / (np.log(dTA / dTB)))
 
-    eq1 = Q_zu3 / (np.pi * d_i * l3 * alpha_i_3)
-    eq2 = (dTA - dTB) / (np.log(dTA / dTB))
-    return [eq1, eq2]
-
-
-dTB = fsolve(solver_dTB, (1, 1))
+sol = solve([eq1, eq2], [dTB])
 print(dTB)
-
+'''
 '''
 from sympy import solve
 from sympy.solvers import symbol
@@ -225,7 +224,7 @@ from isentroper_Wirkungsgrad_Expander import isentroper_Wirkungsgrad
 n = 5000
 eta_Expander = isentroper_Wirkungsgrad(m,n)
 s3 = PropsSI('S','H',h3,'P',p2,fluid)
-p4 = p1
+p4 = p1 #Druckverhältnis variieren
 h4 = PropsSI('H','S',s3,'P',p4,fluid)
 T4 = PropsSI('T','P',p4,'H',h4,fluid)
 w_t = (h4 - h3) * eta_Expander
@@ -297,6 +296,11 @@ plt.ylabel('eta_th', fontsize=16)
 
 #plt.legend(loc='best')
 plt.show()
+
+
+from calculate_alpha_aw import alpha_1P_i
+#Rekuperator
+alpha_R = alpha_1P_i(p4, T4, fluid, m, d_i)
 
 
 
