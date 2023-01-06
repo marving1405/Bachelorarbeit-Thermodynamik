@@ -11,7 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from calculate_alpha_aw import alpha_inside_tube, alpha_outside_tube
 
-fluid = "REFPROP::PROPANE"
+fluid = "REFPROP::METHANE"
 m_ORC = 10E-3 #TODO implemtieren Verhältnis aus ORC Massenstrom und Oelmassenstrom
 
 """
@@ -19,7 +19,7 @@ Pumpe: Zustand 1 so gewählt, dass Fluid bei 1 bar und unterkühlt vorliegt
 
 """
 p1 = 100000 #kPa
-T1 = 229 #Kelvin
+T1 = 100 #Kelvin
 etaP = 0.9 #wird hier als konstant angesehen
 
 # Berechnung der zu verrichtenden Pumpenarbeit
@@ -49,8 +49,8 @@ T3 = 367.456 #K Berechnet mit LMTD-Methode -> Solver-Funktion #TODO T3 wird erst
 h3 = PropsSI('H','T',T3,'P',p2,fluid) #TODO h3 analog
 
 #TODO Implementieren Massenstromverhältnis
-for x in np.arange(0.1,10,0.1):
-    m_oel = x * m_ORC
+#for x in np.arange(0.1,10,0.1):
+m_oel = 4 * m_ORC
 
 cp_oel = 1.9 #kJ/kg*K
 Tmittel_H = 100 + 273.15 #K
@@ -64,8 +64,8 @@ cp_fluid_1 = PropsSI('C', 'T', T2, 'P', p2, fluid)
 Q_zu1 = m_ORC * cp_fluid_1 * (T2_siedend - T2)
 A_quer = np.pi * (d_i/2)**2 #m2
 
-from if_Abfrage_Rekuperation import abfrage
-abfrage()
+#from if_Abfrage_Rekuperation import abfrage
+#abfrage()
 
 rho_1 = PropsSI('D','T',T2,'P',p2,fluid)  #kg/m3
 v_1 = m_ORC / rho_1
@@ -112,7 +112,7 @@ alpha_a_zweiphasig = 400
 
 
 h2_sattdampf = PropsSI('H','P',p2,'Q',1,fluid)
-h2_siedend = PropsSI('H','P',p2,'T',T2_siedend,fluid)
+h2_siedend = PropsSI('H','P',p2,'Q',0,fluid)
 Q_zu2 = m_ORC * (h2_sattdampf - h2_siedend)
 Tmittel_L = Tmittel_H - ((Q_zu2/1000)/(m_oel * cp_oel))
 
@@ -280,8 +280,8 @@ R_waermeleitung = np.log(d_aa/d_ai) / (2 * np.pi * l_k2 * lambda_fluid_k2)
 P_netto = abs(P_t + P_p)
 eta_th = P_netto / (Q_zu_ges)
 
-plt.plot(x, eta_th, color='black',marker = '.', linestyle = '-')
-plt.xlabel('Massenstromverhältnis', fontsize=16)
+plt.plot(m_ORC, eta_th, color='black',marker = '.', linestyle = '-')
+plt.xlabel('Massenstrom', fontsize=16)
 plt.ylabel('thermischer Wirkungsgrad', fontsize=16)
 
 #plt.legend(loc='best')
