@@ -10,11 +10,12 @@ dTA = 70
 #dTB = T3 - T2_sattdampf
 T2_sattdampf = 330
 
-def equations(x):
-    return [51.7862 - ((400 - x[0])/(np.log(70) - np.log(x[0] - 330)))]
+def solveT3(T3):
 
-root = fsolve(equations, 500.)
+    return [Q_zu3 / (np.pi * d_i * l3 * alpha_i_3) - (dTA - (T3[0] - T2_sattdampf))/(np.log(dTA/(T3[0] - T2_sattdampf)))]
 
-#print(T3)
+T3 = (fsolve(solveT3, 500.))
 
-# Q_zu3 / (np.pi * d_i * l3 * alpha_i_3) - (dTA - (T3 - T2_sattdampf))/(np.log(dTA/(T3 - T2_sattdampf))) = 0
+print(T3)
+
+# Q_zu3 / (np.pi * d_i * l3 * alpha_i_3) - (dTA - (T3[0] - T2_sattdampf))/(np.log(dTA/(T3[0] - T2_sattdampf))) = 0

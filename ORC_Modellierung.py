@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 from calculate_alpha_aw import alpha_inside_tube, alpha_outside_tube
 
 fluid = "PROPANE" #REFPROP::
-m_ORC = 10E-3 #TODO implemtieren Verhältnis aus ORC Massenstrom und Oelmassenstrom
+m_ORC = 10E-3
 
 """
 Pumpe: Zustand 1 so gewählt, dass Fluid bei 1 bar und unterkühlt vorliegt
@@ -44,9 +44,12 @@ T2 = PropsSI('T','H',h2,'P',p2,fluid)
 d_i = 10E-3 #m
 d_ai = 14E-3
 d_aa = 16E-3
+from Test_fsolve import solveT3
 
-T3 = 367.456 #K Berechnet mit LMTD-Methode -> Solver-Funktion #TODO T3 wird erst weiter unten berechnet, später an richtige Stelle
-h3 = PropsSI('H','T',T3,'P',p2,fluid) #TODO h3 analog
+#T3 = 1
+solveT3() #TODO Argumente übergeben
+#T3 = 367.456 #K Berechnet mit LMTD-Methode -> Solver-Funktion
+h3 = PropsSI('H','T',T3,'P',p2,fluid)
 
 #TODO Implementieren Massenstromverhältnis
 #for x in np.arange(0.1,10,0.1):
@@ -130,7 +133,7 @@ R_ges2 = R_konv_innen2 + R_konv_aussen2 + R_waermeleitung2
 Auslegung des Wärmeübertragers 3 (Sattdampf zu überhitzten Dampf)
 '''
 
-#TODO Solver programmieren
+
 Thoch_H = 180 + 273.15 #K
 Thoch_L = 110 + 273.15 #K
 l3 = 5 #m
@@ -161,48 +164,6 @@ delta_T2_2 = T3 - T2_sattdampf
 cp_fluid_3 = PropsSI('C', 'T', T2_siedend, 'Q', 0, fluid)
 Q_zu3 = m_ORC * (h3 - h2_sattdampf)
 dTA = Thoch_H - Thoch_L
-
-'''SOLVER
-from scipy.optimize import fsolve
-from sympy import *
-
-
-dTB = symbols('dTB')
-
-
-sol = solve([eq1, eq2], [dTB])
-print(dTB)
-'''
-'''
-from sympy import solve
-from sympy.solvers import symbol
-
-from sympy.solvers import nsolve
-from sympy.solvers import solveset
-
-
-dTA = Thoch_H - Thoch_L
-dTB = T3 - T2_sattdampf
-
-Q_zu3 / (np.pi * d_i * l3 * alpha_i_3) = (dTA - dTB)/(np.log(dTA/dTB)
-
-dTB = symbol('dTB')
-solve(a = (dTA-dTB)/(np.log(dTA/dTB), dTB)
-'''
-'''
-def eq1(dTB):
-    return ((dTA - dTB) / (np.log(dTA / dTB)))
-
-
-
-def eq2():
-    return (Q_zu3 / (np.pi * d_i * l3 * alpha_i_3))
-
-from scipy import optimize
-sol = optimize.root(eq1, [0, 0], method='hybr')
-sol.dTB
-
-'''
 
 
 Q_zu_ges = Q_zu1 + Q_zu2 + Q_zu3

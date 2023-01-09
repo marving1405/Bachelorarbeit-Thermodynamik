@@ -12,7 +12,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from calculate_alpha_aw import alpha_inside_tube, alpha_outside_tube
 
-fluid = "REFPROP::METHANE"
+fluid = "METHANE"
 for m_ORC in np.arange(10E-3, 40E-3, 1E-3):
     #m_ORC = 10E-3  # TODO implemtieren Verhältnis aus ORC Massenstrom und Oelmassenstrom
 
