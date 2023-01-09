@@ -11,7 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from calculate_alpha_aw import alpha_inside_tube, alpha_outside_tube
 
-fluid = "REFPROP::METHANE"
+fluid = "PROPANE" #REFPROP::
 m_ORC = 10E-3 #TODO implemtieren Verhältnis aus ORC Massenstrom und Oelmassenstrom
 
 """
@@ -19,7 +19,7 @@ Pumpe: Zustand 1 so gewählt, dass Fluid bei 1 bar und unterkühlt vorliegt
 
 """
 p1 = 100000 #kPa
-T1 = 100 #Kelvin
+T1 = 229 #Kelvin
 etaP = 0.9 #wird hier als konstant angesehen
 
 # Berechnung der zu verrichtenden Pumpenarbeit
@@ -64,7 +64,7 @@ cp_fluid_1 = PropsSI('C', 'T', T2, 'P', p2, fluid)
 Q_zu1 = m_ORC * cp_fluid_1 * (T2_siedend - T2)
 A_quer = np.pi * (d_i/2)**2 #m2
 
-#from if_Abfrage_Rekuperation import abfrage
+from if_Abfrage_Rekuperation import abfrage
 #abfrage()
 
 rho_1 = PropsSI('D','T',T2,'P',p2,fluid)  #kg/m3
@@ -105,7 +105,7 @@ Auslegung des Wärmeübertragers 2 (siedende Flüssigkeit zu Sattdampf)
 isotherme Zustandsänderung, daher über 1.HS
 '''
 
-lambda_fluid_2 = PropsSI('CONDUCTIVITY','T',T2_siedend,'P',p2,fluid)
+lambda_fluid_2 = PropsSI('CONDUCTIVITY','T',T2_siedend,'Q',0,fluid)
 alpha_i_zweiphasig = 600
 alpha_a_zweiphasig = 400
 # TODO andere alphas aus VDI Waermeatlas ok?
@@ -138,14 +138,14 @@ l3 = 5 #m
 h3 = PropsSI('H','T',T3,'P',p2,fluid)
 T2_sattdampf = PropsSI('T','P',p2,'Q',1,fluid)
 
-rho_3 = PropsSI('D','T',T2_sattdampf,'P',p2,fluid)  #kg/m3
+rho_3 = PropsSI('D','T',T2_sattdampf,'Q',1,fluid)  #kg/m3
 v_3 = m_ORC / rho_3
 c_3 = v_3 / A_quer
-viscosity_3 = PropsSI('VISCOSITY','T',T2_sattdampf,'P',p2,fluid)
+viscosity_3 = PropsSI('VISCOSITY','T',T2_sattdampf,'Q',1,fluid)
 
 re_3 = rho_3 * c_3 * d_i / viscosity_3
-lambda_fluid_3 = PropsSI('CONDUCTIVITY','T',T2_sattdampf,'P',p2,fluid)
-pr_3 = PropsSI('PRANDTL','T',T2_sattdampf,'P',p2,fluid)
+lambda_fluid_3 = PropsSI('CONDUCTIVITY','T',T2_sattdampf,'Q',1,fluid)
+pr_3 = PropsSI('PRANDTL','T',T2_sattdampf,'Q',1,fluid)
 alpha_i_3 = alpha_inside_tube(re_3,pr_3,lambda_fluid_3, d_i)
 alpha_a_3 = alpha_outside_tube(d_ai, d_aa, lambda_fluid_3)
 
@@ -153,12 +153,12 @@ A_i_3 = 2 * np.pi * d_i/2 * l3/3
 A_a_3 = 2 * np.pi * d_ai/2 * l3/3
 R_konv_innen3 = 1 / A_i_3 * alpha_i_3
 R_konv_aussen3 = 1 / A_a_3 * alpha_a_3
-R_waermeleitung3 = np.log(d_aa/d_ai) / (2* np.pi * l3 * lambda_fluid_3)
+R_waermeleitung3 = np.log(d_aa/d_ai) / (2 * np.pi * l3 * lambda_fluid_3)
 
 
 R_ges3 = R_konv_innen3 + R_konv_aussen3 + R_waermeleitung3
 delta_T2_2 = T3 - T2_sattdampf
-cp_fluid_3 = PropsSI('C', 'T', T2_siedend, 'P', p2, fluid)
+cp_fluid_3 = PropsSI('C', 'T', T2_siedend, 'Q', 0, fluid)
 Q_zu3 = m_ORC * (h3 - h2_sattdampf)
 dTA = Thoch_H - Thoch_L
 
