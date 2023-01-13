@@ -6,6 +6,8 @@ Created on Thu Nov  3 16:24:32 2022
 """
 import json, CoolProp.CoolProp as CP
 
+import numpy
+
 CP.set_config_string(CP.ALTERNATIVE_REFPROP_PATH, 'C:\\Program Files (x86)\\REFPROP\\')
 from CoolProp.CoolProp import PropsSI
 import numpy as np
@@ -65,7 +67,7 @@ A_quer = np.pi * (d_i / 2) ** 2  # m2
 
 from if_Abfrage_Rekuperation import abfrage
 
-abfrage()
+#abfrage()
 
 rho_1 = PropsSI('D', 'T', T2, 'P', p2, fluid)  # kg/m3
 v_1 = m_ORC / rho_1
@@ -244,23 +246,20 @@ plt.ylabel('thermischer Wirkungsgrad', fontsize=16)
 # plt.legend(loc='best')
 plt.show()
 
-'''''
-from calculate_alpha_aw import alpha_1P_i
 
-if Rekuperation = true:
-    # Rekuperator
 
-    # Berechnung nach lmtd-Methode Gleichung nach Temperatur mit l = 5m auflösen (mit Q_zu1)
-    T5 = 247.113  # K
-else: #Berechnung mit WÜ1 und Tanks
-    #Programmierung WÜ
-
-'''''
 
 # TODO Kondensatoren mit Rekuperator in if-Schleife implementieren (und WÜ1)
-
-
-
+# Kühlen ÜD -> SF
+from Test_fsolve import solveT2_Rekuperator
+lR = 5 #m
+h4_sattdampf = PropsSI('H', 'P', p4, 'Q', 1, fluid)
+T4_sattdampf = PropsSI('T', 'P', p4, 'H', h4_sattdampf, fluid)
+dTAR = float(T4 - T4_sattdampf)
+alpha_R = float(alpha_1P_i(p4, T4, fluid, m_ORC, d_i))
+Q_abR = float(m_ORC * (h4 - h4_sattdampf))
+T2_Rekuperator = fsolve(solveT2_Rekuperator, 229., args=(Q_abR, d_i, lR, alpha_R, T2, dTAR))
+h2_Rekuperator = PropsSI('H', 'P', p2, 'T', T4_sattdampf, fluid)
 
 
 

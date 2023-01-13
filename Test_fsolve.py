@@ -14,3 +14,7 @@ def solveT3(T3, Q_zu3, d_i, l3, alpha_i_3, T2_sattdampf, dTA):
 
 # Q_zu3 / (np.pi * d_i * l3 * alpha_i_3) - (dTA - (T3[0] - T2_sattdampf))/(np.log(dTA/(T3[0] - T2_sattdampf))) = 0
 
+def solveT2_Rekuperator(T2_Rekuperator, Q_abR, d_i, lR, alpha_R, T2, dTAR):
+
+    return [Q_abR / (np.pi * d_i * lR * alpha_R) - (dTAR - (T2_Rekuperator[0] - T2))/(np.log(dTAR/(T2_Rekuperator[0] - T2)))]
+
