@@ -6,7 +6,7 @@ Created on Thu Nov  3 16:24:32 2022
 """
 import json, CoolProp.CoolProp as CP
 
-import numpy
+import numpy #LOL
 
 CP.set_config_string(CP.ALTERNATIVE_REFPROP_PATH, 'C:\\Program Files (x86)\\REFPROP\\')
 from CoolProp.CoolProp import PropsSI
