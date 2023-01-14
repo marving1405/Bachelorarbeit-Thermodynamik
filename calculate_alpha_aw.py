@@ -49,19 +49,19 @@ def alpha_1P_annulus(p, T, fluid, m_dot, d_ai, d_a):
 def alpha_boiling(m, x, D, rhol, rhog, mul, mug, kl, Cpl, Hvap, sigma, dPsat, Te):
     """
     calculates alpha in wet steam region, documentation available on https://ht.readthedocs.io/en/latest/ht.boiling_flow.html
-    :param m:
-    :param x:
-    :param D:
-    :param rhol:
-    :param rhog:
-    :param mul:
-    :param mug:
-    :param kl:
-    :param Cpl:
-    :param Hvap:
-    :param sigma:
-    :param dPsat:
-    :param Te:
+    :param m: Massenstrom
+    :param x: Dampfgehalt im Rohrintervall
+    :param D: Rohrdurchmesser
+    :param rhol: Dichte Flüssigkeit
+    :param rhog: Dichte Gas
+    :param mul: Viskosität Flüssigkeit
+    :param mug: Viskosität Gas
+    :param kl: Wärmeleitfähigkeit lambda
+    :param Cpl: Wärmekapazität Flüssigkeit
+    :param Hvap: Verdampfungsenthalpie Flüssigkeit
+    :param sigma: Oberflächenspannung Flüssigkeit
+    :param dPsat: Differenz des Sättigungsdruckes der Flüssigkeit am Einlass und Auslass
+    :param Te: Übertemperatur der Wand
     :return:
     """
     alpha = ht.boiling_flow.Chen_Bennett(m, x, D, rhol, rhog, mul, mug, kl, Cpl, Hvap, sigma, dPsat, Te)
