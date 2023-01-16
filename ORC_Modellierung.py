@@ -11,6 +11,7 @@ from calculate_alpha_aw import alpha_inside_tube, alpha_outside_tube
 from Test_fsolve import solveT3
 from calculate_alpha_aw import alpha_1P_i
 from calculate_alpha_aw import alpha_boiling
+from calculate_alpha_aw import alpha_1P_annulus
 from scipy.optimize import fsolve
 from isentroper_Wirkungsgrad_Expander import isentroper_Wirkungsgrad
 CP.set_config_string(CP.ALTERNATIVE_REFPROP_PATH, 'C:\\Program Files (x86)\\REFPROP\\')
@@ -61,16 +62,17 @@ A_quer = np.pi * (d_i / 2) ** 2  # m2
 Auslegung des Wärmeübertragers 1 (Unterkühlte Flüssigkeit zu siedender Flüssigkeit)
 '''
 T2_siedend = PropsSI('T', 'P', p2, 'Q', 0, fluid)
+h2_siedend = PropsSI('H', 'P', p2, 'Q', 0, fluid)
 cp_fluid_1 = PropsSI('C', 'T', T2, 'P', p2, fluid)
-Q_zu1 = m_ORC * cp_fluid_1 * (T2_siedend - T2)
+Q_zu1 = m_ORC * (h2_siedend - h2) #TODO Herstellen einer Verknüpfung zu Tanktemperaturen
 
 rho_1 = PropsSI('D', 'T', T2, 'P', p2, fluid)  # kg/m3
 v_1 = m_ORC / rho_1
 c_1 = v_1 / A_quer
 viscosity_1 = PropsSI('VISCOSITY', 'T', T2, 'P', p2, fluid)
-lambda_fluid_1 = PropsSI('CONDUCTIVITY', 'T', T2, 'P', p2, fluid)
+lambda_fluid_1 = PropsSI('CONDUCTIVITY', 'T', T2, 'P', p2, fluid) #TODO außen oder innen?
 pr_1 = PropsSI('PRANDTL', 'T', T2, 'P', p2, fluid)
-alpha_a_1 = alpha_outside_tube(d_ai, d_aa, lambda_fluid_1)
+alpha_a_1 = alpha_1P_annulus(p2,T2,fluid,m_oel,d_ai,d_aa)
 alpha_i_1 = alpha_1P_i(p2, T2, fluid, m_ORC, d_i)
 
 Tlow_H = 60 + 273.15  # K
@@ -91,8 +93,8 @@ Auslegung des Wärmeübertragers 2 (siedende Flüssigkeit zu Sattdampf)
 isotherme Zustandsänderung, daher über 1.HS
 '''
 T2_sattdampf = PropsSI('T', 'P', p2, 'Q', 1, fluid)
-viscosity2_liq = PropsSI('VISCOSITY', 'T', T2_siedend, 'P', p2, fluid)
-viscosity_2_gas = PropsSI('VISCOSITY', 'T', T2_sattdampf, 'P', p2, fluid)
+viscosity2_liq = PropsSI('VISCOSITY', 'Q', 0, 'P', p2, fluid)
+viscosity_2_gas = PropsSI('VISCOSITY', 'Q', 1, 'P', p2, fluid)
 cp2_liq = PropsSI('C', 'T', T2_siedend, 'Q', 0, fluid)
 surface_Tension = PropsSI('SURFACE_TENSION', 'T', T2_siedend, 'Q', 0, fluid)
 Te = T2_siedend
@@ -109,8 +111,7 @@ alpha_a_zweiphasig = 400
 
 Tmittel_H = 100 + 273.15  # K
 h2_sattdampf = PropsSI('H', 'P', p2, 'Q', 1, fluid)
-h2_siedend = PropsSI('H', 'P', p2, 'Q', 0, fluid)
-Q_zu2 = m_ORC * (h2_sattdampf - h2_siedend)
+Q_zu2 = m_ORC * (h2_sattdampf - h2_siedend) #TODO Herstellen einer Verknüpfung zu Tanktemperaturen
 Tmittel_L = Tmittel_H - ((Q_zu2 / 1000) / (m_oel * cp_oel))
 
 l2 = Q_zu2 / (np.pi * d_i * alpha_i_zweiphasig * (Tmittel_H - Tmittel_L))
@@ -125,7 +126,7 @@ R_ges2 = R_konv_innen2 + R_konv_aussen2 + R_waermeleitung2
 '''
 Auslegung des Wärmeübertragers 3 (Sattdampf zu überhitzten Dampf)
 '''
-Thoch_H = 180 + 273.15  # K
+Thoch_H = 140 + 273.15  # K
 Thoch_L = 120 + 273.15  # K
 dTA_3 = Thoch_H - Thoch_L
 l3 = 5  # m festgelegt
@@ -150,7 +151,7 @@ R_ges3 = R_konv_innen3 + R_konv_aussen3 + R_waermeleitung3
 
 T3 = fsolve(solveT3, 350., args=(Q_zu3, d_i, l3, alpha_i_3, T2_sattdampf, dTA_3))
 
-h3 = PropsSI('H', 'T', T3, 'P', p2, fluid)
+h3 = PropsSI('H', 'T', T3[0], 'P', p2, fluid)
 Q_zu_ges = Q_zu1 + Q_zu2 + Q_zu3
 
 '''
@@ -228,3 +229,4 @@ plt.ylabel('thermischer Wirkungsgrad', fontsize=16)
 
 # plt.legend(loc='best')
 plt.show()
+print(eta_th)
