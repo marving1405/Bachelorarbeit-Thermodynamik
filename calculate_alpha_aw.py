@@ -25,7 +25,7 @@ def alpha_1P_i(p, T, fluid, m_dot, d_i):
 
 def alpha_1P_annulus(p, T, fluid, m_dot, d_ai, d_a):
     """
-    calculates heat transfer coefficient inside tube annulus for 1 phase
+    calculates heat transfer coefficient outside tube annulus for 1 phase
     :param p: pressure
     :param T: temperature
     :param fluid: fluid as string
