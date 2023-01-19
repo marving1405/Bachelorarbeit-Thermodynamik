@@ -179,33 +179,43 @@ verhaeltnis = p2 / p4
 """
 Kondensator 1: Kühlmittel Methanol
 """
+kuehlmittel1 = "REFPROP::METHANOL"
+p_Kuehlmittel1 = 100000  # Pa
+m_Kuehlmittel1 = 40E-3
+
 h4_siedend = CP.PropsSI('H', 'P', p4, 'Q', 0, fluid)
 T4_siedend = CP.PropsSI('T', 'P', p4, 'H', h4_siedend, fluid)
-kuehlmittel1 = "REFPROP::METHANOL"
+Q_ab1 = m_ORC * (h4 - h4_siedend)
+Te_kuehlmittel1 = T4 - 30 #pinch point temperature = 30K difference
+he_kuehlmittel = CP.PropsSI('H', 'P', p_Kuehlmittel1, 'T', Te_kuehlmittel1, kuehlmittel1)
+ha_kuehlmittel = Q_ab1 / (m_Kuehlmittel1) + he_kuehlmittel
+Ta_kuehlmittel1 = CP.PropsSI('T', 'P', p_Kuehlmittel1, 'H', ha_kuehlmittel, kuehlmittel1)
+print(Te_kuehlmittel1)
+print(Ta_kuehlmittel1)
 dTA_k1 = T4 - T4_siedend
-dTB_k1 = 20
-p_Tank1 = 100000  # Pa
-m_Kuelmittel1 = 40E-3
+dTB_k1 = Ta_kuehlmittel1 - Te_kuehlmittel1
+print(dTB_k1)
+
+
 '''
 Kondensator 1, ÜD -> SF
 '''
 
 lambda_fluid_k1 = CP.PropsSI('CONDUCTIVITY', 'T', T4, 'P', p4, kuehlmittel1)
-
 alpha_i_k1 = alpha_1P_i(p4,T4,fluid,m_ORC,d_i)
-alpha_a_k1 = alpha_1P_annulus(p4,T4,kuehlmittel1,m_Kuelmittel1,d_ai,d_aa)
+alpha_a_k1 = alpha_1P_annulus(p4,T4,kuehlmittel1,m_Kuehlmittel1,d_ai,d_aa)
 
 
-Q_ab1 = m_ORC * (h4 - h4_siedend)
-print(T4)
+
+
 
 l_k1 = Q_ab1 / (np.pi * d_i * alpha_i_k1 * ((dTA_k1 - dTB_k1) / (np.log(dTA_k1 / dTB_k1))))
-
-A_i_k1 = (2 * np.pi * d_i) / (2 * l_k1)
-A_a_k1 = (2 * np.pi * d_ai) / (2 * l_k1)
+print(l_k1)
+A_i_k1 = np.pi * d_i
+A_a_k1 = np.pi * d_ai
 R_konv_innen_k1 = 1 / (A_i_k1 * alpha_i_k1)
 R_konv_aussen_k1 = 1 / (A_a_k1 * alpha_a_k1)
-R_waermeleitung_k1 = np.log(d_aa / d_ai) / (2 * np.pi * l_k1 * lambda_fluid_k1)
+R_waermeleitung_k1 = np.log(d_aa / d_ai) / (2 * np.pi * lambda_fluid_k1)
 
 '''
 Kondensator 2 SF -> UK
