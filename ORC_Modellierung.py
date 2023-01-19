@@ -23,7 +23,7 @@ m_OEL = v * m_ORC
 cp_oel = 1.9  # kJ/kg*K
 h_g = CP.PropsSI('H', 'P', 101325, 'Q', 1, fluid)
 h_liq = CP.PropsSI('H', 'P', 101325, 'Q', 0, fluid)
-h_v = h_g - h_liq
+h_v = h_g - h_liq # Vedanpfungsenthalpie
 
 
 
@@ -72,7 +72,7 @@ Auslegung des Wärmeübertragers 1 (Unterkühlte Flüssigkeit zu siedender Flüs
 '''
 T2_siedend = CP.PropsSI('T', 'P', p2, 'Q', 0, fluid)
 h2_siedend = CP.PropsSI('H', 'P', p2, 'Q', 0, fluid)
-Q_zu1 = m_ORC * (h2_siedend - h2) #TODO Herstellen einer Verknüpfung zu Tanktemperaturen
+Q_zu1 = m_ORC * (h2_siedend - h2) #TODO Herstellen einer Verknüpfung zu Tanktemperaturen?
 
 alpha_a_1 = alpha_1P_annulus(p_Tank1, Tlow_L, arbeitsfluid1, m_WASSER, d_ai, d_aa)
 alpha_i_1 = alpha_1P_i(p2, T2, fluid, m_ORC, d_i)
@@ -137,28 +137,25 @@ Auslegung des Wärmeübertragers 3 (Sattdampf zu überhitzten Dampf)
 Thoch_H = 160 + 273.15  # K
 Thoch_L = 120 + 273.15  # K
 dTA_3 = Thoch_H - Thoch_L
-l3 = 5  # m festgelegt
+l3 = 20  # m festgelegt
 Q_zu3 = m_OEL * cp_oel * (Thoch_H - Thoch_L) * 1000
 
-rho_3 = CP.PropsSI('D', 'T', T2_sattdampf, 'Q', 1, fluid)  # kg/m3
-v_3 = m_ORC / rho_3
-c_3 = v_3 / A_quer
-viscosity_3 = CP.PropsSI('VISCOSITY', 'T', T2_sattdampf, 'Q', 1, fluid)
-re_3 = rho_3 * c_3 * d_i / viscosity_3
+
 lambda_fluid_3 = CP.PropsSI('CONDUCTIVITY', 'T', T2_sattdampf, 'Q', 1, fluid)
-pr_3 = CP.PropsSI('PRANDTL', 'T', T2_sattdampf, 'Q', 1, fluid)
+
 alpha_i_3 = alpha_1P_i(p2, T2_sattdampf, fluid, m_ORC, d_i)
 alpha_a_3 = alpha_outside_tube(d_ai, d_aa, lambda_fluid_3) #TODO Stoffdaten Mineralöl
 
-A_i_3 = (2 * np.pi * d_i) / (2 * l3)
-A_a_3 = (2 * np.pi * d_ai) / (2 * l3)
+A_i_3 = np.pi * d_i * l3
+A_a_3 = np.pi * d_ai * l3
 R_konv_innen3 = 1 / (A_i_3 * alpha_i_3)
 R_konv_aussen3 = 1 / (A_a_3 * alpha_a_3)
 R_waermeleitung3 = np.log(d_aa / d_ai) / (2 * np.pi * l3 * lambda_fluid_3)
 R_ges3 = R_konv_innen3 + R_konv_aussen3 + R_waermeleitung3
 #TODO Gesamtwiderstand in SolveT3 implementieren
-T3 = fsolve(solveT3, 350., args=(Q_zu3, d_i, l3, alpha_i_3, T2_sattdampf, dTA_3))
-
+T3 = fsolve(solveT3, 350., args=(Q_zu3, R_ges3, T2_sattdampf, dTA_3))
+print(R_ges3)
+print(T3)
 h3 = CP.PropsSI('H', 'T', T3[0], 'P', p2, fluid)
 x3 = CP.PropsSI('Q', 'T', T3[0], 'P', p2, fluid)/1000
 Q_zu_ges = Q_zu1 + Q_zu2 + Q_zu3
@@ -179,25 +176,29 @@ P_t = m_ORC * w_t * eta_Expander
 # TODO Druckverhältnis implementieren und variieren
 verhaeltnis = p2 / p4
 
+"""
+Kondensator 1: Kühlmittel Methanol
+"""
+h4_siedend = CP.PropsSI('H', 'P', p4, 'Q', 0, fluid)
+T4_siedend = CP.PropsSI('T', 'P', p4, 'H', h4_siedend, fluid)
+kuehlmittel1 = "REFPROP::METHANOL"
+dTA_k1 = T4 - T4_siedend
+dTB_k1 = 20
+p_Tank1 = 100000  # Pa
+m_Kuelmittel1 = 40E-3
 '''
 Kondensator 1, ÜD -> SF
 '''
-rho_k1 = CP.PropsSI('D', 'T', T4, 'P', p4, fluid)  # kg/m3
-v_k1 = m_ORC / rho_k1
-c_k1 = v_k1 / A_quer
-viscosity_k1 = CP.PropsSI('VISCOSITY', 'T', T4, 'P', p4, fluid)
-re_k1 = rho_k1 * c_k1 * d_i / viscosity_k1
-lambda_fluid_k1 = CP.PropsSI('CONDUCTIVITY', 'T', T4, 'P', p4, fluid)
-pr_k1 = CP.PropsSI('PRANDTL', 'T', T4, 'P', p4, fluid)
-alpha_i_k1 = alpha_inside_tube(re_k1, pr_k1, lambda_fluid_k1, d_i)
-alpha_a_k1 = alpha_outside_tube(d_ai, d_aa, lambda_fluid_k1)
 
-h4_siedend = CP.PropsSI('H', 'P', p4, 'Q', 0, fluid)
-T4_siedend = CP.PropsSI('T', 'P', p4, 'H', h4_siedend, fluid)
+lambda_fluid_k1 = CP.PropsSI('CONDUCTIVITY', 'T', T4, 'P', p4, kuehlmittel1)
+
+alpha_i_k1 = alpha_1P_i(p4,T4,fluid,m_ORC,d_i)
+alpha_a_k1 = alpha_1P_annulus(p4,T4,kuehlmittel1,m_Kuelmittel1,d_ai,d_aa)
+
+
 Q_ab1 = m_ORC * (h4 - h4_siedend)
+print(T4)
 
-dTA_k1 = T4 - T4_siedend
-dTB_k1 = 60  # TODO Kühlmittel? und Temperaturdifferenz
 l_k1 = Q_ab1 / (np.pi * d_i * alpha_i_k1 * ((dTA_k1 - dTB_k1) / (np.log(dTA_k1 / dTB_k1))))
 
 A_i_k1 = (2 * np.pi * d_i) / (2 * l_k1)
