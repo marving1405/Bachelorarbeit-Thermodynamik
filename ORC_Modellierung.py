@@ -203,44 +203,48 @@ Kondensator 1, ÜD -> SF
 
 lambda_fluid_k1 = CP.PropsSI('CONDUCTIVITY', 'T', T4, 'P', p4, kuehlmittel1)
 alpha_i_k1 = alpha_1P_i(p4,T4,fluid,m_ORC,d_i)
-alpha_a_k1 = alpha_1P_annulus(p4,T4,kuehlmittel1,m_Kuehlmittel1,d_ai,d_aa)
+alpha_a_k1 = alpha_1P_annulus(p4,Te_kuehlmittel1,kuehlmittel1,m_Kuehlmittel1,d_ai,d_aa)
 
 
 
-
-
-l_k1 = Q_ab1 / (np.pi * d_i * alpha_i_k1 * ((dTA_k1 - dTB_k1) / (np.log(dTA_k1 / dTB_k1))))
-print(l_k1)
 A_i_k1 = np.pi * d_i
 A_a_k1 = np.pi * d_ai
 R_konv_innen_k1 = 1 / (A_i_k1 * alpha_i_k1)
 R_konv_aussen_k1 = 1 / (A_a_k1 * alpha_a_k1)
 R_waermeleitung_k1 = np.log(d_aa / d_ai) / (2 * np.pi * lambda_fluid_k1)
+R_ges_k1 = R_konv_innen_k1 + R_konv_aussen_k1 + R_waermeleitung_k1
+l_k1 = Q_ab1 / ((1/R_ges_k1) * ((dTA_k1 - dTB_k1) / (np.log(dTA_k1 / dTB_k1))))
+print(l_k1)
 
+"""
+Kondensator 2: Kühlmittel Methanol
+"""
+kuehlmittel2 = "REFPROP::METHANOL"
+p_Kuehlmittel2 = 100000  # Pa
+m_Kuehlmittel2 = 40E-3
+Te_kuehlmittel2 = T4_siedend - 20 #pinch point temperature = 20K difference
 '''
 Kondensator 2 SF -> UK
 '''
-rho_k2 = CP.PropsSI('D', 'T', T4, 'P', p4, fluid)  # kg/m3
-v_k2 = m_ORC / rho_k2
-c_k2 = v_k2 / A_quer
-viscosity_k2 = CP.PropsSI('VISCOSITY', 'T', T4, 'P', p4, fluid)
-re_k2 = rho_k2 * c_k2 * d_i / viscosity_k2
-lambda_fluid_k2 = CP.PropsSI('CONDUCTIVITY', 'T', T4, 'P', p4, fluid)
-pr_k2 = CP.PropsSI('PRANDTL', 'T', T4, 'P', p4, fluid)
-alpha_i_k2 = alpha_inside_tube(re_k2, pr_k2, lambda_fluid_k2, d_i)
-alpha_a_k2 = alpha_outside_tube(d_ai, d_aa, lambda_fluid_k2)
+
+lambda_fluid_k2 = CP.PropsSI('CONDUCTIVITY', 'T', T4_siedend, 'P', p4, kuehlmittel2)
 
 Q_ab2 = m_ORC * (h4_siedend - h1)
 dTA_k2 = T4_siedend - T1
 dTB_k2 = 20  # TODO Kühlmittel? und Temperaturdifferenz
-l_k2 = Q_ab2 / (np.pi * d_i * alpha_i_k2 * (dTA_k2 - dTB_k2 / np.log(dTA_k2 / dTB_k2)))
+alpha_i_k2 = alpha_1P_i(p4,T4_siedend,fluid,m_ORC,d_i)
+alpha_a_k2 = alpha_1P_annulus(p4,Te_kuehlmittel2,kuehlmittel2,m_Kuehlmittel2,d_ai,d_aa)
 
 
-A_i_k2 = (2 * np.pi * d_i) / (2 * l_k2)
-A_a_k2 = (2 * np.pi * d_ai) / (2 * l_k2)
+
+A_i_k2 = np.pi * d_i
+A_a_k2 = np.pi * d_ai
 R_konv_innen_k2 = 1 / (A_i_k2 * alpha_i_k2)
 R_konv_aussen_k2 = 1 / (A_a_k2 * alpha_a_k2)
-R_waermeleitung_k2 = np.log(d_aa / d_ai) / (2 * np.pi * l_k2 * lambda_fluid_k2)
+R_waermeleitung_k2 = np.log(d_aa / d_ai) / (2 * np.pi * lambda_fluid_k2)
+R_ges_k2 = R_konv_innen_k2 + R_konv_aussen_k2 + R_waermeleitung_k2
+l_k2 = Q_ab2 / ((1/R_ges_k2) * (dTA_k2 - dTB_k2 / np.log(dTA_k2 / dTB_k2)))
+print(l_k2)
 
 "Berechnung thermischer Wirkungsgrad"
 P_netto = abs(P_t + P_p)
