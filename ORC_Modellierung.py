@@ -18,7 +18,7 @@ CP.set_config_string(CP.ALTERNATIVE_REFPROP_PATH, 'C:\\Program Files (x86)\\REFP
 fluid = "REFPROP::PROPANE" #[0.7]&METHANE[0.3]"
 # TODO Implementieren Massenstromverhältnis
 m_ORC = 10E-3  # kg/s
-v = 4 # beschreibt das Verhältnis von Arbeits- zu Prozessfluid
+v = 2 # beschreibt das Verhältnis von Arbeits- zu Prozessfluid
 m_OEL = v * m_ORC
 cp_oel = 1.9  # kJ/kg*K
 h_g = CP.PropsSI('H', 'P', 101325, 'Q', 1, fluid)
@@ -101,6 +101,7 @@ p_Tank2 = 100000  # Pa
 Auslegung des Wärmeübertragers 2 (siedende Flüssigkeit zu Sattdampf)
 isotherme Zustandsänderung, daher über 1.HS
 '''
+lambda_oel_Tmittel_L = 0.128
 T2_sattdampf = CP.PropsSI('T', 'P', p2, 'Q', 1, fluid)
 viscosity2_liq = CP.PropsSI('VISCOSITY', 'Q', 0, 'P', p2, fluid)
 viscosity2_gas = CP.PropsSI('VISCOSITY', 'Q', 1, 'P', p2, fluid)
@@ -113,48 +114,48 @@ rho2_siedend = CP.PropsSI('D', 'Q', 0, 'P', p2, fluid) #TODO rhos ändern
 rho2_sattdampf = CP.PropsSI('D', 'Q', 1, 'P', p2, fluid)
 
 alpha_i_zweiphasig = 600  # alpha_boiling(m_ORC,0,d_i,rho2_siedend,rho2_sattdampf,viscosity2_liq,viscosity_2_gas,lambda_fluid_2,cp2_liq,h_v,surface_Tension,dPsat,T2_siedend) # TODO alpha-Berechnung zweiphasig
-alpha_a_zweiphasig = 400 #TODO Wert annehmen, da Fluid seinen Zustand nicht ändert und nicht in Stoffdatenbank ist (aus VDI-Wärmeatlas)
+alpha_a_2 = alpha_outside_tube(d_ai, d_aa, lambda_oel_Tmittel_L) #TODO Wert annehmen, da Fluid seinen Zustand nicht ändert und nicht in Stoffdatenbank ist (aus VDI-Wärmeatlas)
 
-
+cp_oel_Tmittel_L = 2.173 #kJ/kgK
 Tmittel_H = 100 + 273.15  # K
 h2_sattdampf = CP.PropsSI('H', 'P', p2, 'Q', 1, fluid)
 Q_zu2 = m_ORC * (h2_sattdampf - h2_siedend) #TODO Herstellen einer Verknüpfung zu Tanktemperaturen
-Tmittel_L = Tmittel_H - ((Q_zu2 / 1000) / (m_OEL * cp_oel))
-lambda_Tank2 = 0.8 #CP.PropsSI('CONDUCTIVITY', 'T', Tmittel_L, 'P', p_Tank2, arbeitsfluid2) #TODO Stoffdaten von Mineralöl
+Tmittel_L = Tmittel_H - ((Q_zu2 / 1000) / (m_OEL * cp_oel_Tmittel_L)) #TODO cp anpassen
+print(Tmittel_L)
+
 
 A_i_2 = np.pi * d_i
 A_a_2 = np.pi * d_ai
 
 R_konv_innen2 = 1 / (A_i_2 * alpha_i_zweiphasig)
-R_konv_aussen2 = 1 / (A_a_2 * alpha_a_zweiphasig)
-R_waermeleitung2 = np.log(d_aa / d_ai) / (2 * np.pi * lambda_Tank2)
+R_konv_aussen2 = 1 / (A_a_2 * alpha_a_2)
+R_waermeleitung2 = np.log(d_aa / d_ai) / (2 * np.pi * lambda_oel_Tmittel_L)
 R_ges2 = R_konv_innen2 + R_konv_aussen2 + R_waermeleitung2
 l2 = Q_zu2 / ((1/R_ges2) * (Tmittel_H - Tmittel_L))  #Nur Durchschnittstemperatur, da isotherme Zustandsänderung
 
 '''
 Auslegung des Wärmeübertragers 3 (Sattdampf zu überhitzten Dampf)
 '''
-Thoch_H = 160 + 273.15  # K
-Thoch_L = 120 + 273.15  # K
+Thoch_H = 150 + 273.15  # K
+Thoch_L = 130 + 273.15  # K
 dTA_3 = Thoch_H - Thoch_L
-l3 = 20  # m festgelegt
+l3 = 10  # m festgelegt
 Q_zu3 = m_OEL * cp_oel * (Thoch_H - Thoch_L) * 1000
 
 
-lambda_fluid_3 = CP.PropsSI('CONDUCTIVITY', 'T', T2_sattdampf, 'Q', 1, fluid)
+lambda_oel_Thoch_H = 0.125 # hänge von Thoch_H ab
 
 alpha_i_3 = alpha_1P_i(p2, T2_sattdampf, fluid, m_ORC, d_i)
-alpha_a_3 = alpha_outside_tube(d_ai, d_aa, lambda_fluid_3) #TODO Stoffdaten Mineralöl
+alpha_a_3 = alpha_outside_tube(d_ai, d_aa, 0.125) #TODO Stoffdaten Mineralöl
 
 A_i_3 = np.pi * d_i * l3
 A_a_3 = np.pi * d_ai * l3
 R_konv_innen3 = 1 / (A_i_3 * alpha_i_3)
 R_konv_aussen3 = 1 / (A_a_3 * alpha_a_3)
-R_waermeleitung3 = np.log(d_aa / d_ai) / (2 * np.pi * l3 * lambda_fluid_3)
+R_waermeleitung3 = np.log(d_aa / d_ai) / (2 * np.pi * l3 * lambda_oel_Thoch_H)
 R_ges3 = R_konv_innen3 + R_konv_aussen3 + R_waermeleitung3
-#TODO Gesamtwiderstand in SolveT3 implementieren
+#TODO Gesamtwiderstand in SolveT3 implementieren richtig?
 T3 = fsolve(solveT3, 350., args=(Q_zu3, R_ges3, T2_sattdampf, dTA_3))
-print(R_ges3)
 print(T3)
 h3 = CP.PropsSI('H', 'T', T3[0], 'P', p2, fluid)
 x3 = CP.PropsSI('Q', 'T', T3[0], 'P', p2, fluid)/1000
@@ -176,9 +177,10 @@ P_t = m_ORC * w_t * eta_Expander
 # TODO Druckverhältnis implementieren und variieren
 verhaeltnis = p2 / p4
 
-"""
-Kondensator 1: Kühlmittel Methanol
-"""
+
+'''
+Kondensator 1, ÜD -> SF, Kühlmedium Methanol
+'''
 kuehlmittel1 = "REFPROP::METHANOL"
 p_Kuehlmittel1 = 100000  # Pa
 m_Kuehlmittel1 = 40E-3
@@ -187,20 +189,12 @@ h4_siedend = CP.PropsSI('H', 'P', p4, 'Q', 0, fluid)
 T4_siedend = CP.PropsSI('T', 'P', p4, 'H', h4_siedend, fluid)
 Q_ab1 = m_ORC * (h4 - h4_siedend)
 Te_kuehlmittel1 = T4 - 30 #pinch point temperature = 30K difference
-he_kuehlmittel = CP.PropsSI('H', 'P', p_Kuehlmittel1, 'T', Te_kuehlmittel1, kuehlmittel1)
-ha_kuehlmittel = Q_ab1 / (m_Kuehlmittel1) + he_kuehlmittel
-Ta_kuehlmittel1 = CP.PropsSI('T', 'P', p_Kuehlmittel1, 'H', ha_kuehlmittel, kuehlmittel1)
-print(Te_kuehlmittel1)
-print(Ta_kuehlmittel1)
+he_kuehlmittel1 = CP.PropsSI('H', 'P', p_Kuehlmittel1, 'T', Te_kuehlmittel1, kuehlmittel1)
+ha_kuehlmittel1 = Q_ab1 / (m_Kuehlmittel1) + he_kuehlmittel1
+Ta_kuehlmittel1 = CP.PropsSI('T', 'P', p_Kuehlmittel1, 'H', ha_kuehlmittel1, kuehlmittel1)
+
 dTA_k1 = T4 - T4_siedend
 dTB_k1 = Ta_kuehlmittel1 - Te_kuehlmittel1
-print(dTB_k1)
-
-
-'''
-Kondensator 1, ÜD -> SF
-'''
-
 lambda_fluid_k1 = CP.PropsSI('CONDUCTIVITY', 'T', T4, 'P', p4, kuehlmittel1)
 alpha_i_k1 = alpha_1P_i(p4,T4,fluid,m_ORC,d_i)
 alpha_a_k1 = alpha_1P_annulus(p4,Te_kuehlmittel1,kuehlmittel1,m_Kuehlmittel1,d_ai,d_aa)
@@ -214,24 +208,22 @@ R_konv_aussen_k1 = 1 / (A_a_k1 * alpha_a_k1)
 R_waermeleitung_k1 = np.log(d_aa / d_ai) / (2 * np.pi * lambda_fluid_k1)
 R_ges_k1 = R_konv_innen_k1 + R_konv_aussen_k1 + R_waermeleitung_k1
 l_k1 = Q_ab1 / ((1/R_ges_k1) * ((dTA_k1 - dTB_k1) / (np.log(dTA_k1 / dTB_k1))))
-print(l_k1)
 
-"""
-Kondensator 2: Kühlmittel Methanol
-"""
+'''
+Kondensator 2 SF -> UK, Kühlmedium Methanol
+'''
 kuehlmittel2 = "REFPROP::METHANOL"
 p_Kuehlmittel2 = 100000  # Pa
 m_Kuehlmittel2 = 40E-3
-Te_kuehlmittel2 = T4_siedend - 20 #pinch point temperature = 20K difference
-'''
-Kondensator 2 SF -> UK
-'''
-
 lambda_fluid_k2 = CP.PropsSI('CONDUCTIVITY', 'T', T4_siedend, 'P', p4, kuehlmittel2)
 
 Q_ab2 = m_ORC * (h4_siedend - h1)
+Te_kuehlmittel2 = T4_siedend - 20 #pinch point temperature = 20K difference
+he_kuehlmittel2 = CP.PropsSI('H', 'P', p_Kuehlmittel2, 'T', Te_kuehlmittel2, kuehlmittel2)
+ha_kuehlmittel2 = Q_ab2 / (m_Kuehlmittel2) + he_kuehlmittel2
+Ta_kuehlmittel2 = CP.PropsSI('T', 'P', p_Kuehlmittel2, 'H', ha_kuehlmittel2, kuehlmittel2)
 dTA_k2 = T4_siedend - T1
-dTB_k2 = 20  # TODO Kühlmittel? und Temperaturdifferenz
+dTB_k2 = Ta_kuehlmittel1 - Te_kuehlmittel1
 alpha_i_k2 = alpha_1P_i(p4,T4_siedend,fluid,m_ORC,d_i)
 alpha_a_k2 = alpha_1P_annulus(p4,Te_kuehlmittel2,kuehlmittel2,m_Kuehlmittel2,d_ai,d_aa)
 
@@ -244,7 +236,7 @@ R_konv_aussen_k2 = 1 / (A_a_k2 * alpha_a_k2)
 R_waermeleitung_k2 = np.log(d_aa / d_ai) / (2 * np.pi * lambda_fluid_k2)
 R_ges_k2 = R_konv_innen_k2 + R_konv_aussen_k2 + R_waermeleitung_k2
 l_k2 = Q_ab2 / ((1/R_ges_k2) * (dTA_k2 - dTB_k2 / np.log(dTA_k2 / dTB_k2)))
-print(l_k2)
+
 
 "Berechnung thermischer Wirkungsgrad"
 P_netto = abs(P_t + P_p)
