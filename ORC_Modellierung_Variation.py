@@ -19,7 +19,7 @@ CP.set_config_string(CP.ALTERNATIVE_REFPROP_PATH, 'C:\\Program Files (x86)\\REFP
 for p2 in np.arange(100000, 2000000, 100000):
     fluid = "REFPROP::PROPANE" #[0.7]&METHANE[0.3]"
     # TODO Implementieren Massenstromverhältnis
-    m_ORC = 10E-3  # kg/s
+    m_ORC = 40E-3  # kg/s
     v = 2 # beschreibt das Verhältnis von Arbeits- zu Prozessfluid
     m_OEL = v * m_ORC
     cp_oel = 1.9  # kJ/kg*K
@@ -128,7 +128,7 @@ for p2 in np.arange(100000, 2000000, 100000):
     '''
     Auslegung des Wärmeübertragers 3 (Sattdampf zu überhitzten Dampf)
     '''
-    Thoch_H = 170 + 273.15  # K
+    Thoch_H = 160 + 273.15  # K
     Thoch_L = 110 + 273.15  # K
     dTA_3 = Thoch_H - Thoch_L
     l3 = 10  # m festgelegt
@@ -174,7 +174,7 @@ for p2 in np.arange(100000, 2000000, 100000):
     '''
     kuehlmittel1 = "REFPROP::METHANOL"
     p_Kuehlmittel1 = 100000  # Pa
-    m_Kuehlmittel1 = 30E-3
+    m_Kuehlmittel1 = 100E-3
 
     h4_siedend = CP.PropsSI('H', 'P', p4, 'Q', 0, fluid)
     T4_siedend = CP.PropsSI('T', 'P', p4, 'H', h4_siedend, fluid)
