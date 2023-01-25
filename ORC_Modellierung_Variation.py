@@ -12,12 +12,15 @@ from calculate_alpha_aw import alpha_1P_i
 from calculate_alpha_aw import alpha_boiling
 from calculate_alpha_aw import alpha_1P_annulus
 from scipy.optimize import fsolve
+from Stoffdaten_Oel_Funktionen import lambda_Oel
+from Stoffdaten_Oel_Funktionen import cp_Oel
+
 from isentroper_Wirkungsgrad_Expander import isentroper_Wirkungsgrad
 
 CP.set_config_string(CP.ALTERNATIVE_REFPROP_PATH, 'C:\\Program Files (x86)\\REFPROP\\')
 
 
-for p2 in np.arange(500000, 2100000, 100000):
+for p2 in np.arange(100000, 2100000, 10000):
     fluid = "REFPROP::PROPANE" #[0.7]&METHANE[0.3]"
     m_ORC = 30E-3  # kg/s
     v = 2 # beschreibt das Verhältnis von Arbeits- zu Prozessfluid
@@ -228,13 +231,14 @@ for p2 in np.arange(500000, 2100000, 100000):
     "Berechnung thermischer Wirkungsgrad"
     P_netto = abs(P_t + P_p)
     eta_th = P_netto / Q_zu_ges
+    #print(eta_th)
+    T_verhaeltnis = T3[0] / T1
 
-
-    plt.plot(p2, P_netto, color='black', marker='.', linestyle='-')
-    #plt.plot(p2, eta_th, color='black', marker='.', linestyle='-')
+    #plt.plot(p2, P_netto, color='black', marker='.', linestyle='-')
+    plt.plot(T_verhaeltnis, eta_th, color='black', marker='.', linestyle='-')
 plt.xlabel('Verdampfungsdruck', fontsize=16)
 plt.ylabel('thermischer Wirkungsgrad', fontsize=16)
 plt.show()
 
     # plt.legend(loc='best')
-    #print(eta_th)
+
