@@ -13,14 +13,14 @@ from calculate_alpha_aw import alpha_boiling
 from calculate_alpha_aw import alpha_1P_annulus
 from scipy.optimize import fsolve
 from isentroper_Wirkungsgrad_Expander import isentroper_Wirkungsgrad
+from Stoffdaten_Oel_Funktionen import lambda_Oel
+from Stoffdaten_Oel_Funktionen import cp_Oel
 CP.set_config_string(CP.ALTERNATIVE_REFPROP_PATH, 'C:\\Program Files (x86)\\REFPROP\\')
 
 fluid = "REFPROP::PROPANE" #[0.7]&METHANE[0.3]"
-# TODO Implementieren Massenstromverhältnis
-m_ORC = 10E-3  # kg/s
+m_ORC = 30E-3  # kg/s
 v = 2 # beschreibt das Verhältnis von Arbeits- zu Prozessfluid
 m_OEL = v * m_ORC
-cp_oel = 1.9  # kJ/kg*K
 h_g = CP.PropsSI('H', 'P', 101325, 'Q', 1, fluid)
 h_liq = CP.PropsSI('H', 'P', 101325, 'Q', 0, fluid)
 h_v = h_g - h_liq # Vedampfungsenthalpie
@@ -73,7 +73,7 @@ alpha_i_1 = alpha_1P_i(p2, T2, fluid, m_ORC, d_i)
 dTA_1 = T2_siedend - T2
 dTB_1 = Tlow_H - Tlow_L
 
-lambda_Tank1 = CP.PropsSI('CONDUCTIVITY', 'T', Tlow_L, 'P', p_Tank1, arbeitsfluid1)  # Temperatur am Eingang gewählt
+lambda_Tank1 = CP.PropsSI('CONDUCTIVITY', 'T', Tlow_H, 'P', p_Tank1, arbeitsfluid1)  # Temperatur am Eingang gewählt
 A_i = np.pi * d_i
 A_a = np.pi * d_ai
 R_konv_innen1 = 1 / (A_i * alpha_i_1)
@@ -89,7 +89,7 @@ isotherme Zustandsänderung, daher über 1.HS
 #arbeitsfluid2 = shell heat transfer oil s2
 Tmittel_H = 100 + 273.15  # K
 p_Tank2 = 100000  # Pa
-lambda_oel_Tmittel_L = 0.128 #TODO Funktion
+lambda_oel_Tmittel_H = lambda_Oel(Tmittel_H)
 T2_sattdampf = CP.PropsSI('T', 'P', p2, 'Q', 1, fluid)
 viscosity2_liq = CP.PropsSI('VISCOSITY', 'Q', 0, 'P', p2, fluid)
 viscosity2_gas = CP.PropsSI('VISCOSITY', 'Q', 1, 'P', p2, fluid)
@@ -105,21 +105,17 @@ lambda_fluid_2 = CP.PropsSI('CONDUCTIVITY', 'Q', 0, 'P', p2, fluid)
 Te = Tmittel_H + (Q_zu2/1000 * np.log(d_ai/d_i) / 2 * np.pi * 10 * lambda_fluid_2)
 dPsat = CP.PropsSI('P', 'T', T2_siedend, 'Q', 0, fluid) - CP.PropsSI('P', 'T', T2_siedend, 'Q', 0, fluid)
 alpha_i_zweiphasig = alpha_boiling(m_ORC, 0.7, d_i, rho2_siedend, rho2_sattdampf, viscosity2_liq, viscosity2_gas, lambda_fluid_2, cp2_liq, h_v, sigma, dPsat, Te) # TODO alpha-Berechnung zweiphasig
-alpha_a_2 = alpha_outside_tube(d_ai, d_aa, lambda_oel_Tmittel_L)
+alpha_a_2 = alpha_outside_tube(d_ai, d_aa, lambda_oel_Tmittel_H)
 
-cp_oel_Tmittel_L = 2.173 #kJ/kgK #TODO cp anpassen abhängig von Öltemperatur -> Funktion schreiben mit Werten
-
-
-
-Tmittel_L = Tmittel_H - ((Q_zu2 / 1000) / (m_OEL * cp_oel_Tmittel_L))
-
+cp_oel_Tmittel_H = cp_Oel(Tmittel_H)
+Tmittel_L = Tmittel_H - ((Q_zu2 / 1000) / (m_OEL * cp_oel_Tmittel_H))
 
 A_i_2 = np.pi * d_i
 A_a_2 = np.pi * d_ai
 
 R_konv_innen2 = 1 / (A_i_2 * alpha_i_zweiphasig)
 R_konv_aussen2 = 1 / (A_a_2 * alpha_a_2)
-R_waermeleitung2 = np.log(d_aa / d_ai) / (2 * np.pi * lambda_oel_Tmittel_L)
+R_waermeleitung2 = np.log(d_aa / d_ai) / (2 * np.pi * lambda_oel_Tmittel_H)
 R_ges2 = R_konv_innen2 + R_konv_aussen2 + R_waermeleitung2
 l2 = Q_zu2 / ((1/R_ges2) * (Tmittel_H - Tmittel_L))  #Nur Temperaturdifferenz, da isotherme Zustandsänderung
 
@@ -129,11 +125,12 @@ Auslegung des Wärmeübertragers 3 (Sattdampf zu überhitzten Dampf)
 Thoch_H = 170 + 273.15  # K
 Thoch_L = 110 + 273.15  # K
 dTA_3 = Thoch_H - Thoch_L
-l3 = 10  # m festgelegt
-Q_zu3 = m_OEL * cp_oel * (Thoch_H - Thoch_L) * 1000
+l3 = 15  # m festgelegt
+cp_oel_Thoch_H = cp_Oel(Thoch_H)
+Q_zu3 = m_OEL * cp_oel_Thoch_H * (Thoch_H - Thoch_L) * 1000
 
 
-lambda_oel_Thoch_H = 0.125 # hängt von Thoch_H ab #TODO Funktion schreiben
+lambda_oel_Thoch_H = lambda_Oel(Thoch_H)
 
 alpha_i_3 = alpha_1P_i(p2, T2_sattdampf, fluid, m_ORC, d_i)
 alpha_a_3 = alpha_outside_tube(d_ai, d_aa, 0.125)
@@ -147,7 +144,6 @@ R_ges3 = R_konv_innen3 + R_konv_aussen3 + R_waermeleitung3
 T3 = fsolve(solveT3, 350., args=(Q_zu3, R_ges3, T2_sattdampf, dTA_3))
 
 h3 = CP.PropsSI('H', 'T', T3[0], 'P', p2, fluid)
-x3 = CP.PropsSI('Q', 'T', T3[0], 'P', p2, fluid)/1000
 Q_zu_ges = Q_zu1 + Q_zu2 + Q_zu3
 
 '''
@@ -172,7 +168,7 @@ Kondensator 1, ÜD -> SF, Kühlmedium Methanol
 '''
 kuehlmittel1 = "REFPROP::METHANOL"
 p_Kuehlmittel1 = 100000  # Pa
-m_Kuehlmittel1 = 30E-3
+m_Kuehlmittel1 = 100E-3
 
 h4_siedend = CP.PropsSI('H', 'P', p4, 'Q', 0, fluid)
 T4_siedend = CP.PropsSI('T', 'P', p4, 'H', h4_siedend, fluid)
@@ -184,7 +180,7 @@ Ta_kuehlmittel1 = CP.PropsSI('T', 'P', p_Kuehlmittel1, 'H', ha_kuehlmittel1, kue
 
 dTA_k1 = T4 - T4_siedend
 dTB_k1 = Ta_kuehlmittel1 - Te_kuehlmittel1
-lambda_fluid_k1 = CP.PropsSI('CONDUCTIVITY', 'T', T4, 'P', p4, kuehlmittel1)
+lambda_fluid_k1 = CP.PropsSI('CONDUCTIVITY', 'T', Te_kuehlmittel1, 'P', p_Kuehlmittel1, kuehlmittel1)
 alpha_i_k1 = alpha_1P_i(p4,T4,fluid,m_ORC,d_i)
 alpha_a_k1 = alpha_1P_annulus(p4,Te_kuehlmittel1,kuehlmittel1,m_Kuehlmittel1,d_ai,d_aa)
 
@@ -204,15 +200,16 @@ Kondensator 2 SF -> UK, Kühlmedium Methanol
 kuehlmittel2 = "REFPROP::METHANOL"
 p_Kuehlmittel2 = 100000  # Pa
 m_Kuehlmittel2 = 10E-3
-lambda_fluid_k2 = CP.PropsSI('CONDUCTIVITY', 'T', T4_siedend, 'P', p4, kuehlmittel2)
+
 
 Q_ab2 = m_ORC * (h4_siedend - h1)
-Te_kuehlmittel2 = T4_siedend - 20 #pinch point temperature = 20K difference
+Te_kuehlmittel2 = T4_siedend - 10 #pinch point temperature = 20K difference
 he_kuehlmittel2 = CP.PropsSI('H', 'P', p_Kuehlmittel2, 'T', Te_kuehlmittel2, kuehlmittel2)
 ha_kuehlmittel2 = Q_ab2 / (m_Kuehlmittel2) + he_kuehlmittel2
 Ta_kuehlmittel2 = CP.PropsSI('T', 'P', p_Kuehlmittel2, 'H', ha_kuehlmittel2, kuehlmittel2)
 dTA_k2 = T4_siedend - T1
 dTB_k2 = Ta_kuehlmittel1 - Te_kuehlmittel1
+lambda_fluid_k2 = CP.PropsSI('CONDUCTIVITY', 'T', Te_kuehlmittel2, 'P', p_Kuehlmittel2, kuehlmittel2)
 alpha_i_k2 = alpha_1P_i(p4,T4_siedend,fluid,m_ORC,d_i)
 alpha_a_k2 = alpha_1P_annulus(p4,Te_kuehlmittel2,kuehlmittel2,m_Kuehlmittel2,d_ai,d_aa)
 
@@ -231,10 +228,12 @@ l_k2 = Q_ab2 / ((1/R_ges_k2) * (dTA_k2 - dTB_k2 / np.log(dTA_k2 / dTB_k2)))
 P_netto = abs(P_t + P_p)
 eta_th = P_netto / Q_zu_ges
 
-plt.plot(p2, eta_th, color='black', marker='.', linestyle='-')
+
+plt.plot(p2, P_netto, color='black', marker='.', linestyle='-')
+#plt.plot(p2, eta_th, color='black', marker='.', linestyle='-')
 plt.xlabel('Verdampfungsdruck', fontsize=16)
 plt.ylabel('thermischer Wirkungsgrad', fontsize=16)
+plt.show()
 
 # plt.legend(loc='best')
-plt.show()
-print(eta_th)
+#print(eta_th)
