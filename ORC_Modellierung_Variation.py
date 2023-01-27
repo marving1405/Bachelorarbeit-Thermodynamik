@@ -6,6 +6,7 @@ Created on Thu Nov  3 16:24:32 2022
 import json, CoolProp.CoolProp as CP
 import numpy as np
 import matplotlib.pyplot as plt
+import sys
 from calculate_alpha_aw import alpha_inside_tube, alpha_outside_tube
 from Test_fsolve import solveT3
 from calculate_alpha_aw import alpha_1P_i
@@ -146,7 +147,7 @@ for Thoch_H in np.arange(110 + 273.15,200 + 273.15, 10):
         R_konv_aussen3 = 1 / (A_a_3 * alpha_a_3)
         R_waermeleitung3 = np.log(d_aa / d_ai) / (2 * np.pi * l3 * lambda_oel_Thoch_H)
         R_ges3 = R_konv_innen3 + R_konv_aussen3 + R_waermeleitung3
-        T3 = fsolve(solveT3, 350., args=(Q_zu3, R_ges3, T2_sattdampf, dTA_3))
+        T3 = fsolve(solveT3, 500., args=(Q_zu3, R_ges3, T2_sattdampf, dTA_3))
 
         h3 = CP.PropsSI('H', 'T', T3[0], 'P', p2, fluid)
         Q_zu_ges = Q_zu1 + Q_zu2 + Q_zu3
@@ -203,8 +204,8 @@ for Thoch_H in np.arange(110 + 273.15,200 + 273.15, 10):
         Kondensator 2 SF -> UK, Kühlmedium Methanol
         '''
         kuehlmittel2 = "REFPROP::R23"
-        p_Kuehlmittel2 = 500000  # Pa
-        m_Kuehlmittel2 = 10E-3
+        p_Kuehlmittel2 = 100000  # Pa
+        m_Kuehlmittel2 = 20E-3
 
 
         Q_ab2 = m_ORC * (h4_siedend - h1)
@@ -228,6 +229,7 @@ for Thoch_H in np.arange(110 + 273.15,200 + 273.15, 10):
         R_ges_k2 = R_konv_innen_k2 + R_konv_aussen_k2 + R_waermeleitung_k2
         l_k2 = Q_ab2 / ((1/R_ges_k2) * (dTA_k2 - dTB_k2 / np.log(dTA_k2 / dTB_k2)))
 
+        Q_ab_ges = Q_ab1 + Q_ab2
 
         "Berechnung thermischer Wirkungsgrad"
         P_netto = abs(P_t + P_p)
@@ -235,11 +237,18 @@ for Thoch_H in np.arange(110 + 273.15,200 + 273.15, 10):
         #print(eta_th)
         #T_verhaeltnis = T3[0] / T1
 
-        plt.plot(p2, P_netto, color='black', marker='.', linestyle='-')
+        #if Q_ab_ges > Q_zu_ges:
+            #sys.exit()
+
+        plt.plot(p2, P_netto, marker='.',color='black', linestyle='solid')
+        #plt.scatter(p2, P_netto)
+        #plt.legend(loc='best')
         #plt.plot(p2, eta_th, color='black',marker='.', linestyle='solid')
-plt.xlabel('Verdampfungsdruck', fontsize=16)
-plt.ylabel('thermischer Wirkungsgrad', fontsize=16)
+plt.title("Nettoleistung über Verdampfungsdruck", fontsize=16)
+plt.xlabel('Verdampfungsdruck [Pa]', fontsize=14)
+plt.ylabel('Nettoleistung [W]', fontsize=14)
+plt.grid(True)
 plt.show()
 
-        # plt.legend(loc='best')
+
 
