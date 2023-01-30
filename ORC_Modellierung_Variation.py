@@ -105,12 +105,14 @@ for Thoch_H in np.arange(110 + 273.15,200 + 273.15, 10):
 
         h2_sattdampf = CP.PropsSI('H', 'P', p2, 'Q', 1, fluid)
         Q_zu2 = m_ORC * (h2_sattdampf - h2_siedend)
+
+
         rho2_siedend = CP.PropsSI('D', 'Q', 0, 'P', p2, fluid)
         rho2_sattdampf = CP.PropsSI('D', 'Q', 1, 'P', p2, fluid)
         lambda_fluid_2 = CP.PropsSI('CONDUCTIVITY', 'Q', 0, 'P', p2, fluid)
-        Te = Tmittel_H + (Q_zu2/1000 * np.log(d_ai/d_i) / 2 * np.pi * 10 * lambda_fluid_2)
-        dPsat = CP.PropsSI('P', 'T', T2_siedend, 'Q', 0, fluid) - CP.PropsSI('P', 'T', T2_siedend, 'Q', 0, fluid)
-        alpha_i_zweiphasig = alpha_boiling(m_ORC, 0.7, d_i, rho2_siedend, rho2_sattdampf, viscosity2_liq, viscosity2_gas, lambda_fluid_2, cp2_liq, h_v, sigma, dPsat, Te) # TODO alpha-Berechnung zweiphasig
+        Te = Tmittel_H + (Q_zu2/1000 * np.log(d_ai/d_i) / 2 * np.pi * 15 * lambda_fluid_2)
+        dPsat = 0#CP.PropsSI('P', 'T', Te, 'Q', 1, fluid) - CP.PropsSI('P', 'T', T2_siedend, 'Q', 0, fluid)
+        alpha_i_zweiphasig = alpha_boiling(m_ORC, 0.1, d_i, rho2_siedend, rho2_sattdampf, viscosity2_liq, viscosity2_gas, lambda_fluid_2, cp2_liq, h_v, sigma, dPsat, Te) # TODO alpha-Berechnung zweiphasig
         alpha_a_2 = alpha_outside_tube(d_ai, d_aa, lambda_oel_Tmittel_H)
 
         cp_oel_Tmittel_H = cp_Oel(Tmittel_H)
