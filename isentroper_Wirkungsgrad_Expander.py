@@ -6,5 +6,5 @@ def isentroper_Wirkungsgrad(m,n):
         :return: isentropic efficiency of expander
         """
 
-    eta_Expander = -10 * m + 1
+    eta_Expander = 0.8
     return eta_Expander
