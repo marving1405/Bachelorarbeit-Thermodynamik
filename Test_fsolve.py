@@ -1,16 +1,9 @@
 from scipy.optimize import fsolve
 import numpy as np
-'''''
-Q_zu3 = 5320 #W
-d_i = 0.01
-l3 = 5
-alpha_i_3 = 727
-dTA = 70
-T2_sattdampf = 330
-'''''
-def solveT3(T3, Q_zu3, R_ges3, Thoch_L, dTA):
 
-    return [Q_zu3 / (1/R_ges3) - (dTA - (Thoch_L - T3[0]))/(np.log(dTA/(Thoch_L - T3[0])))]
+def solveT3(T3, Q_zu3, R_ges3, Thoch_L, dTA_3):
+
+    return [Q_zu3 / (1/R_ges3) - (dTA_3 - (Thoch_L - T3[0]))/(np.log(dTA_3/(Thoch_L - T3[0])))]
 
 # Q_zu3 / (np.pi * d_i * l3 * alpha_i_3) - (dTA - (T3[0] - T2_sattdampf))/(np.log(dTA/(T3[0] - T2_sattdampf))) = 0
 
