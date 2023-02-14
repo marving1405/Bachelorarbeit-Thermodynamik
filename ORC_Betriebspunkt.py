@@ -89,7 +89,7 @@ for Thoch_H in np.arange(100 + 273.15,210 + 273.15, 1):
     R_konv_aussen1 = 1 / (A_a * alpha_a_1)
     R_waermeleitung1 = np.log(d_aa / d_ai) / (2 * np.pi * lambda_Tank1)
     R_ges1 = R_konv_innen1 + R_konv_aussen1 + R_waermeleitung1
-    l1 = Q_zu1 / ((1/R_ges1) * (dTA_1 - dTB_1 / np.log(dTA_1 / dTB_1)))
+    l1 = Q_zu1 / ((1/R_ges1) * (dTA_1 - dTB_1 / np.log(dTA_1 / dTB_1))) #TODO Berechnung optimales dTA und dTB statt l1
 
     '''
     Auslegung des Wärmeübertragers 2 (siedende Flüssigkeit zu Sattdampf)
