@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import sys
 from calculate_alpha_aw import alpha_inside_tube, alpha_outside_tube
 from Test_fsolve import solveT3
+from Test_fsolve import solveT
 from calculate_alpha_aw import alpha_1P_i
 from calculate_alpha_aw import alpha_boiling
 from calculate_alpha_aw import alpha_1P_annulus
@@ -70,31 +71,33 @@ for v in np.arange(0.8,5,0.1):
     '''
     Auslegung des Wärmeübertragers 1 (Unterkühlte Flüssigkeit zu siedender Flüssigkeit)
     '''
-
+    l1 = 5  # m
     T2_siedend = CP.PropsSI('T', 'P', p2, 'Q', 0, fluid)
     h2_siedend = CP.PropsSI('H', 'P', p2, 'Q', 0, fluid)
     Q_zu1 = m_ORC * (h2_siedend - h2)
     arbeitsfluid1 = "REFPROP::WATER"
 
-    Tlow_L = T2_siedend + 5  # pinch point temperature = 5K
-    Tlow_H = Tlow_L + 20 # heiße Speicherfluidtemperatur immer 20K heißer als nach Abkühlvorgang
+    #Tlow_L = T2_siedend + 5  # pinch point temperature = 5K
+    Tlow_H = 82 + 273.15 # K
     p_Tank1 = 100000  # Pa
     m_WASSER = m_OEL
 
     alpha_a_1 = alpha_1P_annulus(p_Tank1, Tlow_H, arbeitsfluid1, m_WASSER, d_ai, d_aa)
     alpha_i_1 = alpha_1P_i(p2, T2, fluid, m_ORC, d_i)
 
-    dTA_1 = Tlow_L - T2
+    #dTA_1 = Tlow_L - T2
     dTB_1 = Tlow_H - T2_siedend
 
     lambda_Tank1 = CP.PropsSI('CONDUCTIVITY', 'T', Tlow_H, 'P', p_Tank1, arbeitsfluid1)  # Temperatur am Eingang gewählt
-    A_i = np.pi * d_i
-    A_a = np.pi * d_ai
+    A_i = np.pi * d_i * l1
+    A_a = np.pi * d_ai * l1
     R_konv_innen1 = 1 / (A_i * alpha_i_1)
     R_konv_aussen1 = 1 / (A_a * alpha_a_1)
-    R_waermeleitung1 = np.log(d_aa / d_ai) / (2 * np.pi * lambda_Tank1)
+    R_waermeleitung1 = np.log(d_aa / d_ai) / (2 * np.pi * l1 * lambda_Tank1)
     R_ges1 = R_konv_innen1 + R_konv_aussen1 + R_waermeleitung1
-    l1 = Q_zu1 / ((1/R_ges1) * (dTA_1 - dTB_1 / np.log(dTA_1 / dTB_1))) #TODO Berechnung optimales dTA und dTB statt l1
+
+    #l1 = Q_zu1 / ((1/R_ges1) * (dTA_1 - dTB_1 / np.log(dTA_1 / dTB_1))) #TODO Berechnung optimales dTA und dTB statt l1
+    Tlow_L = fsolve(solveT, 330., args=(Q_zu1, R_ges1, T2, dTB_1))
 
     '''
     Auslegung des Wärmeübertragers 2 (siedende Flüssigkeit zu Sattdampf)
