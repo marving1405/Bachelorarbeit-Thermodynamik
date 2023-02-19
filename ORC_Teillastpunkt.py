@@ -65,14 +65,14 @@ Als Rohrdurchmesser werden Innen 10mm und außen 16mm festgelegt
 Innen befindet sich das Arbeitsfluid und außen das Speicherfluid
 """
 
-d_i = 10E-3  # m 10,12,18 #TODO anpassen der Durchmesser?
-d_ai = 12E-3
-d_aa = 18E-3
+d_i = 12E-3  # m 10,12,18 #TODO anpassen der Durchmesser?
+d_ai = 14E-3
+d_aa = 20E-3
 
 '''
 Auslegung des Wärmeübertragers 1 (Unterkühlte Flüssigkeit zu siedender Flüssigkeit)
 '''
-l1 = 5  # m
+l1 = 15  # m
 T2_siedend = CP.PropsSI('T', 'P', p2, 'Q', 0, fluid)
 h2_siedend = CP.PropsSI('H', 'P', p2, 'Q', 0, fluid)
 Q_zu1 = m_ORC * (h2_siedend - h2)
@@ -106,7 +106,7 @@ Auslegung des Wärmeübertragers 2 (siedende Flüssigkeit zu Sattdampf)
 isotherme Zustandsänderung, daher über 1.HS
 '''
 #arbeitsfluid2 = shell heat transfer oil s2
-l2 = 60 #m
+l2 = 55 #m
 Tmittel_L = T2_siedend + 5  # K
 p_Tank2 = 100000  # Pa
 lambda_oel_Tmittel_L = lambda_Oel(Tmittel_L)
@@ -146,9 +146,9 @@ Tmittel_H = fsolve(solveT, 350., args=(Q_zu2, R_ges2, T2_sattdampf, dTA_2))
 '''
 Auslegung des Wärmeübertragers 3 (Sattdampf zu überhitzten Dampf)
 '''
-l3 = 90  # 30m festgelegt
+l3 = 55  # 30m festgelegt
 Thoch_H = 200 + 273.15  # K
-Thoch_L = T2_sattdampf + 5  # K
+Thoch_L = T2_sattdampf + 50  # K
 
 dTA_3 = Thoch_L - T2_sattdampf
 if dTA_3 < 0:
@@ -209,7 +209,7 @@ Kondensator 1, ÜD -> SF, Kühlmedium Methanol
 '''
 kuehlmittel1 = "REFPROP::METHANOL"
 p_Kuehlmittel1 = 100000  # Pa
-m_Kuehlmittel1 = 200E-3
+m_Kuehlmittel1 = 250E-3
 
 h4_siedend = CP.PropsSI('H', 'P', p4, 'Q', 0, fluid)
 T4_siedend = CP.PropsSI('T', 'P', p4, 'H', h4_siedend, fluid)
@@ -289,20 +289,20 @@ g.append(v)
 if Q_ab_ges + P_netto > Q_zu_ges:
     raise SystemExit
 
-    #plt.plot(Thoch_H,eta_th, marker='.',color='black')
-    #plt.plot(Thoch_H, P_netto, marker='.', color='black')
-    #plt.scatter(p2, P_netto)
-    #plt.legend(loc='best')
-    #plt.plot(p2, eta_th, color='black',marker='.', linestyle='solid')
-    plt.plot(d,c,color='blue')
-    plt.title("thermischer Wirkungsgrad über TH des Reservoirs", fontsize=14)
-    plt.xlabel('TH des Reservoirs [K]', fontsize=14)
-    plt.ylabel('thermischer Wirkungsgrad []', fontsize=14)
-    #plt.title("Nettoleistung über TH des Reservoirs", fontsize=14)
-    #plt.xlabel('TH des Reservoirs [K]', fontsize=14)
-    #plt.ylabel('Nettoleistung [W]', fontsize=14)
-    plt.grid(True)
-    plt.show()
+#plt.plot(Thoch_H,eta_th, marker='.',color='black')
+#plt.plot(Thoch_H, P_netto, marker='.', color='black')
+#plt.scatter(p2, P_netto)
+#plt.legend(loc='best')
+#plt.plot(p2, eta_th, color='black',marker='.', linestyle='solid')
+plt.plot(d,c,color='blue')
+plt.title("thermischer Wirkungsgrad über TH des Reservoirs", fontsize=14)
+plt.xlabel('TH des Reservoirs [K]', fontsize=14)
+plt.ylabel('thermischer Wirkungsgrad []', fontsize=14)
+#plt.title("Nettoleistung über TH des Reservoirs", fontsize=14)
+#plt.xlabel('TH des Reservoirs [K]', fontsize=14)
+#plt.ylabel('Nettoleistung [W]', fontsize=14)
+plt.grid(True)
+plt.show()
 
 
 

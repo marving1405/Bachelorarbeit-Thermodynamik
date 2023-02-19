@@ -65,9 +65,9 @@ for Thoch_H in np.arange(70 + 273.15,200 + 273.15, 1):
     Innen befindet sich das Arbeitsfluid und außen das Speicherfluid
     """
 
-    d_i = 10E-3  # m
-    d_ai = 12E-3
-    d_aa = 18E-3
+    d_i = 12E-3  # m
+    d_ai = 14E-3
+    d_aa = 20E-3
 
     '''
     Auslegung des Wärmeübertragers 1 (Unterkühlte Flüssigkeit zu siedender Flüssigkeit)
@@ -80,7 +80,7 @@ for Thoch_H in np.arange(70 + 273.15,200 + 273.15, 1):
     speicherfluid1 = "REFPROP::WATER"
 
     Tlow_L = T2_siedend + 5  # pinch point temperature = 5K
-    Tlow_H = Tlow_L + 20 #TODO festlegen
+    Tlow_H = Tlow_L + 50 #TODO festlegen
     p_Tank1 = 100000  # Pa
     m_WASSER = m_OEL
 
@@ -146,11 +146,11 @@ for Thoch_H in np.arange(70 + 273.15,200 + 273.15, 1):
     Auslegung des Wärmeübertragers 3 (Sattdampf zu überhitzten Dampf)
     '''
     #Thoch_H = 150 + 273.15  # K
-    Thoch_L = T2_sattdampf + 5  # K pinch point
-    T3 = Thoch_H - 10 #K
+    Thoch_L = T2_sattdampf + 50  # K pinch point
+    T3 = Thoch_H - 30 #K
 
     dTA_3 = Thoch_L - T2_sattdampf
-    dTB_3 = T3 - T2_sattdampf
+    dTB_3 = Thoch_H - T3
     if dTA_3 < 0:
         raise ValueError("temperature of working fluid is higher then storage fluid")
     cp_oel_Thoch_H = cp_Oel(Thoch_H)
