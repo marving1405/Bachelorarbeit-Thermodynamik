@@ -20,10 +20,10 @@ from isentroper_Wirkungsgrad_Expander import isentroper_Wirkungsgrad
 CP.set_config_string(CP.ALTERNATIVE_REFPROP_PATH, 'C:\\Program Files (x86)\\REFPROP\\')
 #for p2 in np.arange(500000, 2000000, 10000):
 #for Thoch_H in np.arange(110+273.15, 200+273.15, 1):
-
+#for p2 in np.arange(500000, 2100000, 10000):
 #for m_ORC in np.arange(25E-3,30E-3,1E-3):
-
-
+#
+#for v in np.arange(1,4,0.1):
 #for v in np.arange(0.8,5,0.1):
 a = []
 b = []
@@ -32,12 +32,17 @@ d = []
 e = []
 f = []
 g = []
+h = []
 
-for p2 in np.arange(500000, 2100000, 10000):
+# 40g/s = 152
+# 30g/s = 166
+# 20g/s = 152
+# 10g/s = 152
+for Thoch_H in np.arange(120+273.15, 200+273.15, 1):
     fluid = "REFPROP::PROPANE" #[0.7]&METHANE[0.3]"
 
-    m_ORC = 40E-3  # kg/s
-    v = 1 # beschreibt das Verhältnis von Arbeits- zu Prozessfluid
+    m_ORC = 20E-3  # kg/s
+    v = 3 # beschreibt das Verhältnis von Arbeits- zu Prozessfluid
     m_OEL = v * m_ORC
     h_g = CP.PropsSI('H', 'P', 101325, 'Q', 1, fluid)
     h_liq = CP.PropsSI('H', 'P', 101325, 'Q', 0, fluid)
@@ -51,7 +56,7 @@ for p2 in np.arange(500000, 2100000, 10000):
     etaP = 0.9  # wird hier als konstant angesehen
 
     h1 = CP.PropsSI('H', 'T', T1, 'P', p1, fluid)
-    #p2 = 2000000  # Pa
+    p2 = 2000000  # Pa
     v1 = 1 / (CP.PropsSI('D', 'P', p1, 'T', T1, fluid))  # m3/kg
 
     w_p = (v1 * (p2 - p1)) / etaP # J
@@ -149,10 +154,10 @@ for p2 in np.arange(500000, 2100000, 10000):
     Auslegung des Wärmeübertragers 3 (Sattdampf zu überhitzten Dampf)
     '''
     l3 = 55  # 30m festgelegt
-    Thoch_H = 200 + 273.15  # K
-    Thoch_L = T2_sattdampf + 50  # K
-
+    #Thoch_H = 200 + 273.15  # K
+    Thoch_L = T2_sattdampf + 60 # K
     dTA_3 = Thoch_L - T2_sattdampf
+
     if dTA_3 < 0:
         raise ValueError("temperature of working fluid is higher then storage fluid")
     cp_oel_Thoch_H = cp_Oel(Thoch_H)
@@ -171,8 +176,9 @@ for p2 in np.arange(500000, 2100000, 10000):
 
     T3 = fsolve(solveT3, 400., args=(Q_zu3, R_ges3, Thoch_H, dTA_3))
     if T3 < T2_sattdampf:
-        break
-        #raise ValueError('T3 is lower then T2_sattdampf')
+        raise ValueError('T3 is lower then T2_sattdampf')
+    #break
+    print(T3)
 
     h3 = CP.PropsSI('H', 'T', T3[0], 'P', p2, fluid)
 
@@ -203,7 +209,7 @@ for p2 in np.arange(500000, 2100000, 10000):
     w_ts = (h4s - h3)
     w_t = w_ts * eta_Expander
     P_t = m_ORC * w_t
-    h4 = eta_Expander * w_ts + h3 #TODO h4 musste neu berechnet werden
+    h4 = eta_Expander * w_ts + h3
     T4 = CP.PropsSI("T", "H", h4, "P", p1, fluid)
 
     '''
@@ -270,7 +276,8 @@ for p2 in np.arange(500000, 2100000, 10000):
     "Berechnung thermischer Wirkungsgrad"
     P_netto = abs(P_t + P_p)
     eta_th = P_netto / Q_zu_ges
-
+    print(P_netto)
+    print(eta_th)
 
     "Entropieberechnung"
     Tm1 = (Tlow_H - Tlow_L) / (np.log(Tlow_H / Tlow_L))
@@ -287,6 +294,7 @@ for p2 in np.arange(500000, 2100000, 10000):
     e.append(s_irr)
     f.append(p2)
     g.append(v)
+    h.append(Thoch_L)
 
 
 #plt.plot(Thoch_H,eta_th, marker='.',color='black')
@@ -294,10 +302,10 @@ for p2 in np.arange(500000, 2100000, 10000):
 #plt.scatter(p2, P_netto)
 #plt.legend(loc='best')
 #plt.plot(p2, eta_th, color='black',marker='.', linestyle='solid')
-plt.plot(f,a,color='blue')
-plt.title("thermischer Wirkungsgrad über TH des Reservoirs", fontsize=14)
-plt.xlabel('TH des Reservoirs [K]', fontsize=14)
-plt.ylabel('thermischer Wirkungsgrad []', fontsize=14)
+plt.plot(b,c,color='blue')
+plt.title("Nettoleistung über Speicherfluidmassenstrom", fontsize=14)
+plt.xlabel('Speicherfluidmassenstrom [kg/s]', fontsize=14)
+plt.ylabel('Nettoleistung [W]', fontsize=14)
 #plt.title("Nettoleistung über TH des Reservoirs", fontsize=14)
 #plt.xlabel('TH des Reservoirs [K]', fontsize=14)
 #plt.ylabel('Nettoleistung [W]', fontsize=14)
