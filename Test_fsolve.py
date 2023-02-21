@@ -3,7 +3,7 @@ import numpy as np
 
 def solveT3(T3, Q_zu3, R_ges3, Thoch_H, dTA_3):
 
-    return [(Q_zu3 * R_ges3) - ((dTA_3 - (Thoch_H - T3[0]))/np.log(dTA_3/(Thoch_H - T3[0])))]
+    return [(Q_zu3 * R_ges3) - ((dTA_3 - (Thoch_H - T3[0]))/(np.log(dTA_3) - np.log(Thoch_H - T3[0])))]
 
 # Q_zu3 / (np.pi * d_i * l3 * alpha_i_3) - (dTA - (T3[0] - T2_sattdampf))/(np.log(dTA/(T3[0] - T2_sattdampf))) = 0
 
