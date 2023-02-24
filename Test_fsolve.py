@@ -14,3 +14,7 @@ def solveT2_Rekuperator(T2_Rekuperator, Q_abR, d_i, lR, alpha_R, T2, dTAR):
 def solveT(Tlow_L1 ,Q_zu1, R_ges1, T2, dTB_1):
 
     return [(Q_zu1 * R_ges1) - ((Tlow_L1[0] - T2) - dTB_1) / np.log((Tlow_L1[0] - T2) / dTB_1)]
+
+def solveT_K(Ta ,Q_zu1, R_ges1, T4, dTA_K):
+
+    return [(Q_zu1 * R_ges1) - ((dTA_K - (T4-Ta[0])) / np.log((dTA_K) / (T4-Ta[0])))]
