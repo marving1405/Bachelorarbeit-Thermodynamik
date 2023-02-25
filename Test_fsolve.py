@@ -15,6 +15,6 @@ def solveT(Tlow_L1 ,Q_zu1, R_ges1, T2, dTB_1):
 
     return [(Q_zu1 * R_ges1) - ((Tlow_L1[0] - T2) - dTB_1) / np.log((Tlow_L1[0] - T2) / dTB_1)]
 
-def solveT_K(Ta ,Q_zu1, R_ges1, T4, dTA_K):
+def solveT_K(Te_kuehlmittel ,Q_ab1, R_ges_k, T4_siedend, dTB_K):
 
-    return [(Q_zu1 * R_ges1) - ((dTA_K - (T4-Ta[0])) / np.log((dTA_K) / (T4-Ta[0])))]
+    return [(Q_ab1 * R_ges_k) - (((T4_siedend-Te_kuehlmittel[0])-dTB_K) / np.log((T4_siedend-Te_kuehlmittel[0]) / (dTB_K)))]

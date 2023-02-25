@@ -23,7 +23,7 @@ CP.set_config_string(CP.ALTERNATIVE_REFPROP_PATH, 'C:\\Program Files (x86)\\REFP
 #for p2 in np.arange(500000, 2100000, 10000):
 #for m_ORC in np.arange(25E-3,30E-3,1E-3):
 #for T3 in np.arange(335, 470, 1):
-#for v in np.arange(1,4,0.1):
+#
 #for v in np.arange(0.8,5,0.1):
 a = []
 b = []
@@ -33,17 +33,18 @@ e = []
 f = []
 g = []
 h = []
+i = []
 
 # 40g/s = 152
 # 30g/s = 166
 # 20g/s = 152
 # 10g/s = 152
 plt.close('all')
-for p2 in np.arange(500000, 2000000, 10000):
+for v in np.arange(0.8,1.2,0.1):
     fluid = "REFPROP::PROPANE" #[0.7]&METHANE[0.3]"
 
     m_ORC = 20E-3  # kg/s
-    v = 1 # beschreibt das Verhältnis von Arbeits- zu Prozessfluid
+    #v = 1 # beschreibt das Verhältnis von Arbeits- zu Prozessfluid
     m_OEL = v * m_ORC
     h_g = CP.PropsSI('H', 'P', 101325, 'Q', 1, fluid)
     h_liq = CP.PropsSI('H', 'P', 101325, 'Q', 0, fluid)
@@ -58,7 +59,7 @@ for p2 in np.arange(500000, 2000000, 10000):
 
     h1 = CP.PropsSI('H', 'T', T1, 'P', p1, fluid)
     s1 = CP.PropsSI('S', 'T', T1, 'P', p1, fluid)
-    #p2 = 2000000  # Pa
+    p2 = 2000000  # Pa
     v1 = 1 / (CP.PropsSI('D', 'P', p1, 'T', T1, fluid))  # m3/kg
 
     w_p = (v1 * (p2 - p1)) / etaP # J
@@ -227,16 +228,16 @@ for p2 in np.arange(500000, 2000000, 10000):
     T4_siedend = CP.PropsSI('T', 'P', p4, 'H', h4_siedend, fluid)
     s4_siedend = CP.PropsSI('S', 'P', p4, 'H', h4_siedend, fluid)
     Q_ab1 = m_ORC * (h4 - h4_siedend)
-    Te_kuehlmittel1 = T4_siedend - 10 #K
-    he_kuehlmittel1 = CP.PropsSI('H','T',Te_kuehlmittel1,'P',p4,kuehlmittel1)
+    Ta_kuehlmittel1 = T4_siedend - 5 #K pinch point
+    ha_kuehlmittel1 = CP.PropsSI('H','T',Ta_kuehlmittel1,'P',p4,kuehlmittel1)
 
 
 
-    #dTA_k1 = T4 - Ta_kuehlmittel1
-    dTA_k1 = T4_siedend - Te_kuehlmittel1
-    lambda_fluid_k1 = CP.PropsSI('CONDUCTIVITY', 'T', Te_kuehlmittel1, 'P', p_Kuehlmittel1, kuehlmittel1)
+    dTA_k1 = T4 - Ta_kuehlmittel1
+    #dTA_k1 = T4_siedend - Te_kuehlmittel1
+    #lambda_fluid_k1 = CP.PropsSI('CONDUCTIVITY', 'T', Te_kuehlmittel1, 'P', p_Kuehlmittel1, kuehlmittel1)
     alpha_i_k1 = alpha_1P_i(p4,T4,fluid,m_ORC,d_i)
-    alpha_a_k1 = alpha_1P_annulus(p4,Te_kuehlmittel1,kuehlmittel1,m_Kuehlmittel1,d_ai,d_aa)
+    alpha_a_k1 = alpha_1P_annulus(p4,Ta_kuehlmittel1,kuehlmittel1,m_Kuehlmittel1,d_ai,d_aa)
 
     A_i_k1 = np.pi * d_i * l_k1
     A_a_k1 = np.pi * d_ai * l_k1
@@ -245,8 +246,8 @@ for p2 in np.arange(500000, 2000000, 10000):
     R_waermeleitung_k1 = np.log(d_ai / d_i) / (2 * np.pi * l_k1 * lambda_Kupfer)
     R_ges_k1 = R_konv_innen_k1 + R_konv_aussen_k1 + R_waermeleitung_k1
     #l_k1 = Q_ab1 / ((1/R_ges_k1) * ((dTA_k1 - dTB_k1) / (np.log(dTA_k1 / dTB_k1))))
-    Ta_kuehlmittel1 = fsolve(solveT_K, Te_kuehlmittel1 - 10, args=(Q_ab1, R_ges_k1, T4, dTA_k1))
-    ha_kuehlmittel1 = CP.PropsSI('H', 'P', p_Kuehlmittel1, 'T', Ta_kuehlmittel1, kuehlmittel1)
+    Te_kuehlmittel1 = fsolve(solveT_K, Ta_kuehlmittel1 - 10, args=(Q_ab1, R_ges_k1, T4_siedend, dTA_k1))
+    he_kuehlmittel1 = CP.PropsSI('H', 'P', p_Kuehlmittel1, 'T', Te_kuehlmittel1, kuehlmittel1)
     '''
     Kondensator 2 SF -> UK, Kühlmedium Methanol
     '''
@@ -298,10 +299,11 @@ for p2 in np.arange(500000, 2000000, 10000):
     b.append(Thoch_H-273)
     c.append(P_netto)
     d.append(abs(P_t))
-    #e.append(cp_oel_Thoch_H)
+    e.append(v)
     f.append(s_irr)
     g.append(p2)
     h.append(T3-273)
+
 
 
 point_label = ["1", "2", "2_siedend", "2_sattdampf", "3", "4", "4_siedend"]
@@ -387,7 +389,8 @@ plt.legend()
 # adding secondary fluids to plot figure 2
 x_sec_evap = np.linspace(h4 * m_ORC, (h4 + (h4_siedend - h4)) * m_ORC, 100)
 y_sec_evap = np.linspace(Te_kuehlmittel1, Ta_kuehlmittel1, 100)
-plt.plot(x_sec_evap, y_sec_evap, 'b')
+plt.plot(x_sec_evap, y_sec_evap, 'b', label="Kondensation")
+plt.legend()
 
 x_sec_sc = np.linspace(h3 * m_ORC, (h3 + (h2_sattdampf - h3)) * m_ORC, 100)
 y_sec_sc = np.linspace(Thoch_H, Thoch_L, 100)
@@ -408,7 +411,7 @@ eta_C = 1 - T1/T3
 
 
 plt.figure(3)
-plt.plot(g,a,color='blue')
+plt.plot(e,a,color='blue')
 plt.title("Nettoleistung TH des dritten Reservoirs", fontsize=14)
 plt.xlabel('TH des dritten Reservoirs [K]', fontsize=14)
 plt.ylabel('Nettoleistung [W]', fontsize=14)
