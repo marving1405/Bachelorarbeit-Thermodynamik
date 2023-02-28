@@ -96,3 +96,7 @@ def alpha_outside_tube(d_ai, d_aa, lambda_fluid):
     nu = 3.66 + 1.2 * (d_ai / d_aa) ** (-0.8)
     alpha = nu * lambda_fluid / (d_aa - d_ai)
     return alpha
+
+def alpha_condensation(m, rhog, rhol, kl, mul, Cpl, D, x):
+    alpha = ht.condensation.Akers_Deans_Crosser(m, rhog, rhol, kl, mul, Cpl, D, x)
+    return alpha

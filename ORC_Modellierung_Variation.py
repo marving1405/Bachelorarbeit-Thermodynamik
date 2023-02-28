@@ -32,7 +32,7 @@ for Thoch_H in np.arange(70 + 273.15,200 + 273.15, 1):
 
     fluid = "REFPROP::PROPANE" #[0.7]&METHANE[0.3]"
     m_ORC = 40E-3  # kg/s
-    v = 1 # beschreibt das Verhältnis von Arbeits- zu Prozessfluid
+    v = 5 # beschreibt das Verhältnis von Arbeits- zu Prozessfluid
     m_OEL = v * m_ORC
     h_g = CP.PropsSI('H', 'P', 101325, 'Q', 1, fluid)
     h_liq = CP.PropsSI('H', 'P', 101325, 'Q', 0, fluid)
@@ -65,9 +65,9 @@ for Thoch_H in np.arange(70 + 273.15,200 + 273.15, 1):
     Innen befindet sich das Arbeitsfluid und außen das Speicherfluid
     """
 
-    d_i = 12E-3  # m
-    d_ai = 14E-3
-    d_aa = 20E-3
+    d_i = 22E-3  # m
+    d_ai = 24E-3
+    d_aa = 30E-3
 
     '''
     Auslegung des Wärmeübertragers 1 (Unterkühlte Flüssigkeit zu siedender Flüssigkeit)
@@ -210,14 +210,14 @@ for Thoch_H in np.arange(70 + 273.15,200 + 273.15, 1):
 
     h4_siedend = CP.PropsSI('H', 'P', p4, 'Q', 0, fluid)
     T4_siedend = CP.PropsSI('T', 'P', p4, 'H', h4_siedend, fluid)
-    Q_ab1 = m_ORC * (h4 - h4_siedend)
-    Ta_kuehlmittel1 = T4_siedend - 5 #pinch point temperature = 20K difference
+    Q_ab1 = m_ORC * (h4 - h1)
+    Ta_kuehlmittel1 = T4 - 5 #pinch point temperature = 20K difference
     ha_kuehlmittel1 = CP.PropsSI('H', 'P', p_Kuehlmittel1, 'T', Ta_kuehlmittel1, kuehlmittel1)
     he_kuehlmittel1 = ha_kuehlmittel1 - (Q_ab1 / m_Kuehlmittel1)
     Te_kuehlmittel1 = CP.PropsSI('T', 'P', p_Kuehlmittel1, 'H', he_kuehlmittel1, kuehlmittel1)
 
     dTA_k1 = T4 - Ta_kuehlmittel1
-    dTB_k1 = T4_siedend - Te_kuehlmittel1
+    dTB_k1 = T1 - Te_kuehlmittel1
     lambda_fluid_k1 = CP.PropsSI('CONDUCTIVITY', 'T', Te_kuehlmittel1, 'P', p_Kuehlmittel1, kuehlmittel1)
     alpha_i_k1 = alpha_1P_i(p4,T4,fluid,m_ORC,d_i)
     alpha_a_k1 = alpha_1P_annulus(p4,Te_kuehlmittel1,kuehlmittel1,m_Kuehlmittel1,d_ai,d_aa)

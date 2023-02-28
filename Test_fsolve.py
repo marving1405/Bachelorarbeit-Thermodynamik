@@ -11,10 +11,10 @@ def solveT2_Rekuperator(T2_Rekuperator, Q_abR, d_i, lR, alpha_R, T2, dTAR):
 
     return [Q_abR / (np.pi * d_i * lR * alpha_R) - (dTAR - (T2_Rekuperator[0] - T2))/(np.log(dTAR/(T2_Rekuperator[0] - T2)))]
 
-def solveT(Tlow_L1 ,Q_zu1, R_ges1, T2, dTB_1):
+def solveT1(Tlow_L1 ,Q_zu1, R_ges1, T2, dTB_1):
 
-    return [(Q_zu1 * R_ges1) - ((Tlow_L1[0] - T2) - dTB_1) / np.log((Tlow_L1[0] - T2) / dTB_1)]
+    return [(Q_zu1 * R_ges1) - (((Tlow_L1[0] - T2) - dTB_1) / (np.log((Tlow_L1[0] - T2) - np.log(dTB_1))))]
 
-def solveT_K(Te_kuehlmittel ,Q_ab1, R_ges_k, T4_siedend, dTB_K):
+def solveT_K(Te, Q_ab, R_ges_k, T1, dTA_K):
 
-    return [(Q_ab1 * R_ges_k) - (((T4_siedend-Te_kuehlmittel[0])-dTB_K) / np.log((T4_siedend-Te_kuehlmittel[0]) / (dTB_K)))]
+    return [(Q_ab * R_ges_k) - (((dTA_K)-(T1-Te[0]))/((np.log(dTA_K))-(np.log(T1-Te[0]))))]
