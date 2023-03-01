@@ -38,7 +38,7 @@ i = []
 
 
 plt.close('all')
-for T3 in np.arange(340, 374, 1):
+for T3 in np.arange(340, 364, 1):
     fluid = "REFPROP::PROPANE" #[0.7]&METHANE[0.3]"
 
     m_ORC = 40E-3  # kg/s
@@ -317,9 +317,9 @@ for T3 in np.arange(340, 374, 1):
     h.append(T3-273.15)
 
 plt.figure(3)
-plt.plot(h,f,color='blue')
-plt.title("thermischer Wirkungsgrad über Verdampfungsdruck für m_ORC = 20g/s", fontsize=12)
-plt.xlabel('Verdampfungsdruck [Pa]', fontsize=14)
+plt.plot(h,a,color='blue')
+plt.title("thermischer Wirkungsgrad über Verdampfungstemperatur\nfür m_ORC = 4g/s", fontsize=12)
+plt.xlabel('Verdampfungstemperatur [K]', fontsize=14)
 plt.ylabel('thermischer Wirkungsgrad []', fontsize=14)
 plt.grid(True)
 
@@ -420,11 +420,11 @@ plt.plot(x_sec_sc, y_sec_sc, 'r')
 
 x_sec_ws = np.linspace(h2_sattdampf * m_ORC, (h2_sattdampf + (h2_siedend - h2_sattdampf)) * m_ORC, 100)
 y_sec_ws = np.linspace(Tmittel_H, Tmittel_L, 100)
-plt.plot(x_sec_ws, y_sec_ws, 'r')
+plt.plot(x_sec_ws, y_sec_ws, 'g')
 
 x_sec_sh = np.linspace(h2_siedend * m_ORC, (h2_siedend + (h2 - h2_siedend)) * m_ORC, 100)
 y_sec_sh = np.linspace(Tlow_H, Tlow_L, 100)
-plt.plot(x_sec_sh, y_sec_sh, 'r')
+plt.plot(x_sec_sh, y_sec_sh, 'b')
 
 plt.show()
 
