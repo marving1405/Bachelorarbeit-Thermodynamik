@@ -1,4 +1,4 @@
-def isentroper_Wirkungsgrad(m,n):
+def isentroper_Wirkungsgrad():
     """
         berechnet den isentropen Wirkungsgrad des Expanders
         :param m: mass flow in kg/s

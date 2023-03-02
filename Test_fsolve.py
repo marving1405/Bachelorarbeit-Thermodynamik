@@ -7,13 +7,24 @@ def solveT3(T3, Q_zu3, R_ges3, Thoch_H, dTA_3):
 
 # Q_zu3 / (np.pi * d_i * l3 * alpha_i_3) - (dTA - (T3[0] - T2_sattdampf))/(np.log(dTA/(T3[0] - T2_sattdampf))) = 0
 
-def solveT2_Rekuperator(T2_Rekuperator, Q_abR, d_i, lR, alpha_R, T2, dTAR):
 
-    return [Q_abR / (np.pi * d_i * lR * alpha_R) - (dTAR - (T2_Rekuperator[0] - T2))/(np.log(dTAR/(T2_Rekuperator[0] - T2)))]
 
-def solveT1(Tlow_L1 ,Q_zu1, R_ges1, T2, dTB_1):
+def solver_for_WU1(x,Q,R,T,dTx):
+    return [Q * R - (((x[0]-T)-(dTx))/(np.log(x[0]-T)-np.log(dTx)))]
 
-    return [(Q_zu1 * R_ges1) - (((Tlow_L1[0] - T2) - dTB_1) / (np.log((Tlow_L1[0] - T2) - np.log(dTB_1))))]
+
+def solver_for_WU2(x,Q,R,T,dTx):
+    return [Q * R - ((dTx-(x[0]-T))/(np.log(dTx)-np.log(x[0]-T)))]
+
+def solver_for_WU3(x,Q,R,T,dTx):
+    return [Q * R - (((x[0]-T)-(dTx))/(np.log(x[0]-T)-np.log(dTx)))]
+
+def solveT(T ,Q_zu, R_ges, T_ref, dT):
+
+    return [(Q_zu * R_ges) - (((T[0] - T_ref) - dT) / (np.log((T[0] - T_ref) - np.log(dT))))]
+
+
+
 
 def solveT_K(Te, Q_ab, R_ges_k, T1, dTA_K):
 
