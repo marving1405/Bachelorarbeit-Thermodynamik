@@ -31,11 +31,12 @@ g = []
 
 
 fluid = "REFPROP::PROPANE" #[0.7]&METHANE[0.3]"
-m_ORC = 40E-3  # kg/s
-m_WASSER = 80E-3
+m_ORC = 10E-3  # kg/s
+m_WASSER = 80E-3/4
 cp_WASSER = 4.1819 #kJ/kg*K
-m_OEL_2 = 150E-3
-m_OEL_3 = 50E-3
+m_OEL_2 = 300E-3/4
+m_OEL_3 = 200E-3/4
+m_Kuehlmittel1 = 300E-3/4
 h_g = CP.PropsSI('H', 'P', 101325, 'Q', 1, fluid)
 h_liq = CP.PropsSI('H', 'P', 101325, 'Q', 0, fluid)
 h_v = h_g - h_liq # Vedampfungsenthalpie
@@ -209,7 +210,7 @@ Kondensator 1, ÜD -> SF, Kühlmedium R23
 '''
 kuehlmittel1 = "REFPROP::R23"
 p_Kuehlmittel1 = 100000  # Pa
-m_Kuehlmittel1 = 300E-3
+
 
 h4_siedend = CP.PropsSI('H', 'P', p4, 'Q', 0, fluid)
 T4_siedend = CP.PropsSI('T', 'P', p4, 'H', h4_siedend, fluid)
