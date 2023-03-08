@@ -430,7 +430,7 @@ plt.legend()
 
 # adding secondary fluids to plot figure 2
 
-x_sec_evap = np.linspace(ha_kuehlmittel1 * m_ORC, (ha_kuehlmittel1 + (ha_kuehlmittel1 - he_kuehlmittel1)) * m_ORC, 100)
+x_sec_evap = np.linspace(h1 * m_ORC, h4 * m_ORC, 100)
 y_sec_evap = np.linspace(Te_kuehlmittel1, Ta_kuehlmittel1, 100)
 plt.plot(x_sec_evap, y_sec_evap, 'm', label="Kondensation")
 plt.legend()
