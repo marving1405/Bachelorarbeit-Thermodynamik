@@ -31,12 +31,13 @@ g = []
 
 
 fluid = "REFPROP::PROPANE" #[0.7]&METHANE[0.3]"
+T3 = 380 #K
 m_ORC = 10E-3  # kg/s
-m_WASSER = 80E-3/4
+m_WASSER = 50E-3/4
 cp_WASSER = 4.1819 #kJ/kg*K
-m_OEL_2 = 300E-3/4
-m_OEL_3 = 200E-3/4
-m_Kuehlmittel1 = 300E-3/4
+m_OEL_2 = 250E-3/4
+m_OEL_3 = 54E-3/4
+m_Kuehlmittel1 = 67.4E-3/4
 h_g = CP.PropsSI('H', 'P', 101325, 'Q', 1, fluid)
 h_liq = CP.PropsSI('H', 'P', 101325, 'Q', 0, fluid)
 h_v = h_g - h_liq # Vedampfungsenthalpie
@@ -149,7 +150,7 @@ l2 = (Q_zu2 * R_ges2) / ((dTA_2 - dTB_2) / np.log(dTA_2 / dTB_2))
 '''
 Auslegung des Wärmeübertragers 3 (Sattdampf zu überhitzten Dampf)
 '''
-T3 = 360 #K
+
 Thoch_H = T3 + 5  # K
 
 h3 = CP.PropsSI('H', 'T', T3, 'P', p2, fluid)
@@ -298,4 +299,11 @@ print(f"Länge des ersten WÜ: {l1} ")
 print(f"Länge des zweiten WÜ: {l2} ")
 print(f"Länge des dritten WÜ: {l3} ")
 print(f"Länge des Kondensators: {l_k1} ")
+print(f"Thoch_H: {Thoch_H} ")
+print(f"Thoch_L: {Thoch_L} ")
+print(f"Tmittel_H: {Tmittel_H} ")
+print(f"Tmittel_L: {Tmittel_L} ")
+print(f"Tlow_H: {Tlow_H} ")
+print(f"Tlow_L: {Tlow_L} ")
+
 

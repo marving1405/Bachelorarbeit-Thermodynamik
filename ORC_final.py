@@ -37,18 +37,28 @@ e = []
 f = []
 g = []
 h = []
-i = []
+m = []
+j = []
+k = []
+l = []
+
 
 
 plt.close('all')
-for T3 in np.arange(340, 360, 1):
+for T3 in np.arange(340, 380, 5):
     fluid = "REFPROP::PROPANE" #REFPROP::PROPANE[0.5]&ISOBUTANE[0.5]
 
+    l1 = 31.5  # m
+    l2 = 87.5  # m
+    l3 = 105.5  # m
+    l_k1 = 69.6  # m
+    m_Kuehlmittel1 = 67.4E-3/4
+
     m_ORC = 10E-3  # kg/s
-    m_WASSER = 80E-3
+    m_WASSER = 50E-3/4
     cp_WASSER = 4.1819  # kJ/kg*K
-    m_OEL_2 = 200E-3
-    m_OEL_3 = 100E-3
+    m_OEL_2 = 250E-3/4
+    m_OEL_3 = 54E-3/4
 
     h_g = CP.PropsSI('H', 'P', 101325, 'Q', 1, fluid)
     h_liq = CP.PropsSI('H', 'P', 101325, 'Q', 0, fluid)
@@ -64,7 +74,7 @@ for T3 in np.arange(340, 360, 1):
 
     h1 = CP.PropsSI('H', 'T', T1, 'P', p1, fluid)
     s1 = CP.PropsSI('S', 'T', T1, 'P', p1, fluid)
-    p2 = 1500000  # Pa
+    p2 = 2000000  # Pa
     v1 = 1 / (CP.PropsSI('D', 'P', p1, 'T', T1, fluid))  # m3/kg
 
     w_p = (v1 * (p2 - p1)) / etaP # J
@@ -87,7 +97,7 @@ for T3 in np.arange(340, 360, 1):
     '''
     Auslegung des Wärmeübertragers 1 (Unterkühlte Flüssigkeit zu siedender Flüssigkeit)
     '''
-    l1 = 26  # m
+
     T2_siedend = CP.PropsSI('T', 'P', p2, 'Q', 0, fluid)
     h2_siedend = CP.PropsSI('H', 'P', p2, 'Q', 0, fluid)
     s2_siedend = CP.PropsSI('S', 'P', p2, 'Q', 0, fluid)
@@ -120,7 +130,7 @@ for T3 in np.arange(340, 360, 1):
     isotherme Zustandsänderung, daher über 1.HS
     '''
     #arbeitsfluid2 = shell heat transfer oil s2
-    l2 = 96 #m
+
     Tmittel_L = T2_siedend + 5  # K
     p_Tank2 = 100000  # Pa
     lambda_Oel = 0.129 # also konstant angenommen
@@ -153,12 +163,12 @@ for T3 in np.arange(340, 360, 1):
     R_konv_aussen2 = 1 / (A_a_2 * alpha_a_2)
     R_waermeleitung2 = np.log(d_ai / d_i) / (2 * np.pi * l2 * lambda_Kupfer)
     R_ges2 = R_konv_innen2 + R_konv_aussen2 + R_waermeleitung2
-    Tmittel_H = fsolve(solver_for_WU2, Tmittel_L + 1, args=(Q_zu2, R_ges2, T2_sattdampf, dTA_2))
+    Tmittel_H = fsolve(solver_for_WU2, T2_sattdampf + 1, args=(Q_zu2, R_ges2, T2_sattdampf, dTA_2))
 
     '''
     Auslegung des Wärmeübertragers 3 (Sattdampf zu überhitzten Dampf)
     '''
-    l3 = 33  # 30m festgelegt
+
     #T3 = T2_sattdampf + 20  # K
     Thoch_H = T3 + 5  # K
     #Thoch_L = T2_sattdampf + 5 # K pinch
@@ -223,10 +233,9 @@ for T3 in np.arange(340, 360, 1):
     '''
     Kondensator 1, ÜD -> SD, Kühlmedium R23
     '''
-    l_k1 = 77 #m
+
     kuehlmittel1 = "REFPROP::R23"
     p_Kuehlmittel1 = 100000  # Pa
-    m_Kuehlmittel1 = 443E-3
 
 
     Q_ab1 = m_ORC * (h4 - h1)
@@ -248,10 +257,9 @@ for T3 in np.arange(340, 360, 1):
     R_waermeleitung_k1 = np.log(d_ai / d_i) / (2 * np.pi * l_k1 * lambda_Kupfer)
     R_ges_k1 = R_konv_innen_k1 + R_konv_aussen_k1 + R_waermeleitung_k1
 
-    Te_kuehlmittel1 = fsolve(solveT_K, Ta_kuehlmittel1 - 60, args=(Q_ab1, R_ges_k1, T1, dTA_k1))
+    Te_kuehlmittel1 = fsolve(solveT_K, T1 - 10, args=(Q_ab1, R_ges_k1, T1, dTA_k1))
     he_kuehlmittel1 = CP.PropsSI('H', 'P', p_Kuehlmittel1, 'T', Te_kuehlmittel1, kuehlmittel1)
     m_k1 = (Q_ab1 / (ha_kuehlmittel1 - he_kuehlmittel1)) * 1000
-
 
     Q_ab_ges = Q_ab1
 
@@ -265,7 +273,14 @@ for T3 in np.arange(340, 360, 1):
     Tm2 = (Tmittel_H + Tmittel_L)/2
     Tm3 = (Thoch_H + Thoch_L)/2
     Tmk1 = (Ta_kuehlmittel1 + Te_kuehlmittel1)/2
-    s_irr = -((Q_zu1 / Tm1) + (Q_zu2 / Tm2) + (Q_zu3 / Tm3) - (Q_ab1 / Tmk1))
+    s_evap1 = -Q_zu1/ Tm1
+    s_evap2 = -Q_zu2 / Tm2
+    s_evap3 = -Q_zu3 / Tm3
+    s_kond = Q_ab_ges / Tmk1
+    s_irr = s_evap1 + s_evap2 + s_evap3 + s_kond
+    #s_irr = -((Q_zu1 / Tm1) + (Q_zu2 / Tm2) + (Q_zu3 / Tm3) - (Q_ab1 / Tmk1))
+
+
 
     if s_irr < 0:
         raise ValueError('Die irreversibel erzeugte Entropie ist kleiner null!')
@@ -276,12 +291,57 @@ for T3 in np.arange(340, 360, 1):
     d.append(h3)
     f.append(s_irr)
     g.append(p2)
-    h.append(T3-273.15)
+    h.append(T3)
 
+    j.append(s_evap2[0])
+    k.append(s_evap3[0])
+    l.append(s_kond[0])
+    m.append(s_evap1[0])
+
+plt.figure(4)
+temperature = (h)
+entropy = {
+    's_evap1': m,
+    's_evap2': j,
+    's_evap3': k,
+    's_kond': l,
+}
+xlabel = np.arange(len(h))
+barWidth = 0.25
+multiplier = 0
+
+fig, ax = plt.subplots(layout='constrained')
+
+for attribute, measurement in entropy.items():
+    offset = barWidth * multiplier
+    rects = ax.bar(xlabel + offset, measurement, barWidth, label=attribute)
+    #ax.bar_label(rects, padding=3)
+    multiplier +=1
+
+ax.set_ylabel('Sirr')
+ax.set_title('Sirr über T3')
+ax.set_xticks(xlabel + barWidth, temperature)
+ax.legend(loc='best')
+
+plt.show()
+
+'''
+#plot1 = plt.bar(h,i, width=barWidth)
+plot2 = plt.bar(h,k, color = 'blue', width=barWidth)
+
+
+plot3 = plt.bar(h,j, color = 'green',width=barWidth)
+
+plot4 = plt.bar(h,m,color = 'red', width=barWidth)
+
+
+plt.legend((plot2[0], plot3[0], plot4[0]), ('S_evap1','S_evap2','S_evap3'))
+plt.show()
+'''
 plt.figure(3)
-plt.plot(h,f,color='blue')
-plt.title("thermischer Wirkungsgrad über Verdampfungstemperatur\nfür m_ORC = 40g/s", fontsize=12)
-plt.xlabel('Verdampfungstemperatur [K]', fontsize=14)
+plt.plot(h,a,color='blue')
+plt.title("thermischer Wirkungsgrad über Verdampfungstemperatur\nfür m_ORC = 20g/s", fontsize=12)
+plt.xlabel('Verdampfungstemperatur [°C]', fontsize=14)
 plt.ylabel('thermischer Wirkungsgrad []', fontsize=14)
 plt.grid(True)
 
@@ -358,7 +418,7 @@ plt.plot(np.array(h_j) * m_ORC, t_step, 'k-', label="wet steam region")
 plt.title('T-h-Diagramm für ' + fluid)
 
 # Berechnung Isobare #
-h_step = np.linspace(0, 800000, 100)
+h_step = np.linspace(0, 900000, 100)
 for px in [p1, p2]:
     t_isobar = []
     for hi in h_step:
@@ -369,22 +429,22 @@ for px in [p1, p2]:
 plt.legend()
 
 # adding secondary fluids to plot figure 2
-'''
-x_sec_evap = np.linspace(ha_kuehlmittel1 * m_Kuehlmittel1, (ha_kuehlmittel1 + (ha_kuehlmittel1 - he_kuehlmittel1)) * m_Kuehlmittel1, 100)
-y_sec_evap = np.linspace(Te_kuehlmittel1, Ta_kuehlmittel1, 100)
-plt.plot(x_sec_evap, y_sec_evap, 'b', label="Kondensation")
-plt.legend()
-'''
 
-x_sec_sc = np.linspace(h3 * m_OEL_3, (h3 + (h2_sattdampf - h3)) * m_OEL_3, 100)
+x_sec_evap = np.linspace(ha_kuehlmittel1 * m_ORC, (ha_kuehlmittel1 + (ha_kuehlmittel1 - he_kuehlmittel1)) * m_ORC, 100)
+y_sec_evap = np.linspace(Te_kuehlmittel1, Ta_kuehlmittel1, 100)
+plt.plot(x_sec_evap, y_sec_evap, 'm', label="Kondensation")
+plt.legend()
+
+
+x_sec_sc = np.linspace(h3 * m_ORC, (h3 + (h2_sattdampf - h3)) * m_ORC, 100)
 y_sec_sc = np.linspace(Thoch_H, Thoch_L, 100)
 plt.plot(x_sec_sc, y_sec_sc, 'r')
 
-x_sec_ws = np.linspace(h2_sattdampf * m_OEL_2, (h2_sattdampf + (h2_siedend - h2_sattdampf)) * m_OEL_2, 100)
+x_sec_ws = np.linspace(h2_sattdampf * m_ORC, (h2_sattdampf + (h2_siedend - h2_sattdampf)) * m_ORC, 100)
 y_sec_ws = np.linspace(Tmittel_H, Tmittel_L, 100)
 plt.plot(x_sec_ws, y_sec_ws, 'g')
 
-x_sec_sh = np.linspace(h2_siedend * m_WASSER, (h2_siedend + (h2 - h2_siedend)) * m_WASSER, 100)
+x_sec_sh = np.linspace(h2_siedend * m_ORC, (h2_siedend + (h2 - h2_siedend)) * m_ORC, 100)
 y_sec_sh = np.linspace(Tlow_H, Tlow_L, 100)
 plt.plot(x_sec_sh, y_sec_sh, 'b')
 
