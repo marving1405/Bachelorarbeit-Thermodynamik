@@ -45,20 +45,20 @@ l = []
 
 
 plt.close('all')
-for T3 in np.arange(340, 380, 5):
+for T3 in np.arange(340, 400, 5):
     fluid = "REFPROP::PROPANE" #REFPROP::PROPANE[0.5]&ISOBUTANE[0.5]
 
-    l1 = 31.5  # m
+    l1 = 29 # m
     l2 = 87.5  # m
-    l3 = 105.5  # m
-    l_k1 = 69.6  # m
-    m_Kuehlmittel1 = 341E-3
+    l3 = 68 # m
+    l_k1 = 22 #69.6  # m
+    m_Kuehlmittel1 = 444E-3
 
-    m_ORC = 10E-3  # kg/s
-    m_WASSER = 50E-3/4
+    m_ORC = 40E-3  # kg/s
+    m_WASSER = 60E-3
     cp_WASSER = 4.1819  # kJ/kg*K
-    m_OEL_2 = 250E-3/4
-    m_OEL_3 = 54E-3/4
+    m_OEL_2 = 250E-3
+    m_OEL_3 = 60E-3
 
     h_g = CP.PropsSI('H', 'P', 101325, 'Q', 1, fluid)
     h_liq = CP.PropsSI('H', 'P', 101325, 'Q', 0, fluid)
@@ -106,7 +106,7 @@ for T3 in np.arange(340, 380, 5):
 
 
     #Tlow_L = T2_siedend + 5  # pinch point temperature = 5K
-    Tlow_H = T2_siedend + 1
+    Tlow_H = T2_siedend + 5
     p_Tank1 = 100000  # Pa
 
 
@@ -131,7 +131,7 @@ for T3 in np.arange(340, 380, 5):
     '''
     #arbeitsfluid2 = shell heat transfer oil s2
 
-    Tmittel_L = T2_siedend + 1  # K
+    Tmittel_L = T2_siedend + 5  # K
     p_Tank2 = 100000  # Pa
     lambda_Oel = 0.129 # also konstant angenommen
     T2_sattdampf = CP.PropsSI('T', 'P', p2, 'Q', 1, fluid)
@@ -170,7 +170,7 @@ for T3 in np.arange(340, 380, 5):
     '''
 
     #T3 = T2_sattdampf + 20  # K
-    Thoch_H = T3 + 1  # K
+    Thoch_H = T3 + 5  # K
     #Thoch_L = T2_sattdampf + 5 # K pinch
     #dTA_3 = Thoch_L - T2_sattdampf
     dTB_3 = Thoch_H - T3
@@ -235,14 +235,14 @@ for T3 in np.arange(340, 380, 5):
     '''
 
     kuehlmittel1 = "REFPROP::R23"
-    p_Kuehlmittel1 = 100000  # Pa
+    p_Kuehlmittel1 = 1500000  # Pa
 
 
     Q_ab1 = m_ORC * (h4 - h1)
 
 
-    Ta_kuehlmittel1 = T4 - 30
-    ha_kuehlmittel1 = CP.PropsSI('H','T',Ta_kuehlmittel1,'P',p4,kuehlmittel1)
+    Ta_kuehlmittel1 = T4 - 75
+    ha_kuehlmittel1 = CP.PropsSI('H','T',Ta_kuehlmittel1,'P',p_Kuehlmittel1,kuehlmittel1)
 
 
     dTA_k1 = T4 - Ta_kuehlmittel1

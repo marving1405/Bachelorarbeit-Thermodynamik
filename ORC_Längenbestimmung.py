@@ -31,13 +31,13 @@ g = []
 
 
 fluid = "REFPROP::PROPANE" #[0.7]&METHANE[0.3]"
-T3 = 380 #K
-m_ORC = 10E-3  # kg/s
-m_WASSER = 50E-3/4
+T3 = 400 #K
+m_ORC = 40E-3  # kg/s
+m_WASSER = 60E-3
 cp_WASSER = 4.1819 #kJ/kg*K
-m_OEL_2 = 250E-3/4
-m_OEL_3 = 54E-3/4
-m_Kuehlmittel1 = 67.4E-3/4
+m_OEL_2 = 250E-3
+m_OEL_3 = 60E-3
+m_Kuehlmittel1 = 444E-3
 h_g = CP.PropsSI('H', 'P', 101325, 'Q', 1, fluid)
 h_liq = CP.PropsSI('H', 'P', 101325, 'Q', 0, fluid)
 h_v = h_g - h_liq # Vedampfungsenthalpie
@@ -210,13 +210,13 @@ T4 = CP.PropsSI("T", "H", h4, "P", p1, fluid)
 Kondensator 1, ÜD -> SF, Kühlmedium R23
 '''
 kuehlmittel1 = "REFPROP::R23"
-p_Kuehlmittel1 = 100000  # Pa
+p_Kuehlmittel1 = 1500000  # Pa
 
 
 h4_siedend = CP.PropsSI('H', 'P', p4, 'Q', 0, fluid)
 T4_siedend = CP.PropsSI('T', 'P', p4, 'H', h4_siedend, fluid)
 Q_ab1 = m_ORC * (h4 - h1)
-Ta_kuehlmittel1 = T4 - 5 #pinch point temperature = 20K difference
+Ta_kuehlmittel1 = T4 - 75
 ha_kuehlmittel1 = CP.PropsSI('H', 'P', p_Kuehlmittel1, 'T', Ta_kuehlmittel1, kuehlmittel1)
 he_kuehlmittel1 = ha_kuehlmittel1 - (Q_ab1 / m_Kuehlmittel1)
 Te_kuehlmittel1 = CP.PropsSI('T', 'P', p_Kuehlmittel1, 'H', he_kuehlmittel1, kuehlmittel1)
