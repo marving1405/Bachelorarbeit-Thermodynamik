@@ -52,7 +52,7 @@ for T3 in np.arange(340, 380, 5):
     l2 = 87.5  # m
     l3 = 105.5  # m
     l_k1 = 69.6  # m
-    m_Kuehlmittel1 = 67.4E-3/4
+    m_Kuehlmittel1 = 341E-3
 
     m_ORC = 10E-3  # kg/s
     m_WASSER = 50E-3/4
@@ -106,7 +106,7 @@ for T3 in np.arange(340, 380, 5):
 
 
     #Tlow_L = T2_siedend + 5  # pinch point temperature = 5K
-    Tlow_H = T2_siedend + 5
+    Tlow_H = T2_siedend + 1
     p_Tank1 = 100000  # Pa
 
 
@@ -124,14 +124,14 @@ for T3 in np.arange(340, 380, 5):
     R_konv_aussen1 = 1 / (A_a * alpha_a_1)
     R_waermeleitung1 = np.log(d_ai / d_i) / (2 * np.pi * l1 * lambda_Kupfer)
     R_ges1 = R_konv_innen1 + R_konv_aussen1 + R_waermeleitung1
-    Tlow_L = fsolve(solver_for_WU1, T2 + 1, args=(Q_zu1, R_ges1, T2, dTB_1))
+    Tlow_L = fsolve(solver_for_WU1, T2 + 0.01, args=(Q_zu1, R_ges1, T2, dTB_1))
     '''
     Auslegung des Wärmeübertragers 2 (siedende Flüssigkeit zu Sattdampf)
     isotherme Zustandsänderung, daher über 1.HS
     '''
     #arbeitsfluid2 = shell heat transfer oil s2
 
-    Tmittel_L = T2_siedend + 5  # K
+    Tmittel_L = T2_siedend + 1  # K
     p_Tank2 = 100000  # Pa
     lambda_Oel = 0.129 # also konstant angenommen
     T2_sattdampf = CP.PropsSI('T', 'P', p2, 'Q', 1, fluid)
@@ -163,14 +163,14 @@ for T3 in np.arange(340, 380, 5):
     R_konv_aussen2 = 1 / (A_a_2 * alpha_a_2)
     R_waermeleitung2 = np.log(d_ai / d_i) / (2 * np.pi * l2 * lambda_Kupfer)
     R_ges2 = R_konv_innen2 + R_konv_aussen2 + R_waermeleitung2
-    Tmittel_H = fsolve(solver_for_WU2, T2_sattdampf + 1, args=(Q_zu2, R_ges2, T2_sattdampf, dTA_2))
+    Tmittel_H = fsolve(solver_for_WU2, T2_sattdampf + 0.01, args=(Q_zu2, R_ges2, T2_sattdampf, dTA_2))
 
     '''
     Auslegung des Wärmeübertragers 3 (Sattdampf zu überhitzten Dampf)
     '''
 
     #T3 = T2_sattdampf + 20  # K
-    Thoch_H = T3 + 5  # K
+    Thoch_H = T3 + 1  # K
     #Thoch_L = T2_sattdampf + 5 # K pinch
     #dTA_3 = Thoch_L - T2_sattdampf
     dTB_3 = Thoch_H - T3
@@ -193,7 +193,7 @@ for T3 in np.arange(340, 380, 5):
     R_ges3 = R_konv_innen3 + R_konv_aussen3 + R_waermeleitung3
 
 
-    Thoch_L = fsolve(solver_for_WU3, T2_sattdampf + 1 , args=(Q_zu3, R_ges3, T2_sattdampf, dTB_3))
+    Thoch_L = fsolve(solver_for_WU3, T2_sattdampf + 0.01, args=(Q_zu3, R_ges3, T2_sattdampf, dTB_3))
 
     '''
     Überprüfung Strömungsgeschwindigkeit
@@ -241,7 +241,7 @@ for T3 in np.arange(340, 380, 5):
     Q_ab1 = m_ORC * (h4 - h1)
 
 
-    Ta_kuehlmittel1 = T4 - 5  # K pinch point
+    Ta_kuehlmittel1 = T4 - 30
     ha_kuehlmittel1 = CP.PropsSI('H','T',Ta_kuehlmittel1,'P',p4,kuehlmittel1)
 
 
@@ -257,7 +257,7 @@ for T3 in np.arange(340, 380, 5):
     R_waermeleitung_k1 = np.log(d_ai / d_i) / (2 * np.pi * l_k1 * lambda_Kupfer)
     R_ges_k1 = R_konv_innen_k1 + R_konv_aussen_k1 + R_waermeleitung_k1
 
-    Te_kuehlmittel1 = fsolve(solveT_K, T1 - 10, args=(Q_ab1, R_ges_k1, T1, dTA_k1))
+    Te_kuehlmittel1 = fsolve(solveT_K, T1 - 1, args=(Q_ab1, R_ges_k1, T1, dTA_k1))
     he_kuehlmittel1 = CP.PropsSI('H', 'P', p_Kuehlmittel1, 'T', Te_kuehlmittel1, kuehlmittel1)
     m_k1 = (Q_ab1 / (ha_kuehlmittel1 - he_kuehlmittel1)) * 1000
 
