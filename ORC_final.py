@@ -273,7 +273,7 @@ for T3 in np.arange(340, 400, 5):
     Tm2 = (Tmittel_H + Tmittel_L)/2
     Tm3 = (Thoch_H + Thoch_L)/2
     Tmk1 = (Ta_kuehlmittel1 + Te_kuehlmittel1)/2
-    s_evap1 = -Q_zu1/ Tm1
+    s_evap1 = -Q_zu1 / Tm1
     s_evap2 = -Q_zu2 / Tm2
     s_evap3 = -Q_zu3 / Tm3
     s_kond = Q_ab_ges / Tmk1
@@ -318,7 +318,8 @@ for attribute, measurement in entropy.items():
     #ax.bar_label(rects, padding=3)
     multiplier +=1
 
-ax.set_ylabel('Sirr')
+ax.set_xlabel('T3 [K]')
+ax.set_ylabel('Sirr [W/K]')
 ax.set_title('Sirr über T3')
 ax.set_xticks(xlabel + barWidth, temperature)
 ax.legend(loc='best')
@@ -340,11 +341,29 @@ plt.show()
 '''
 plt.figure(3)
 plt.plot(h,a,color='blue')
-plt.title("thermischer Wirkungsgrad über Verdampfungstemperatur\nfür m_ORC = 20g/s", fontsize=12)
-plt.xlabel('Verdampfungstemperatur [°C]', fontsize=14)
-plt.ylabel('thermischer Wirkungsgrad []', fontsize=14)
+plt.title(f"Thermischer Wirkungsgrad über T3\nfür m_ORC = {m_ORC}kg/s", fontsize=12)
+plt.xlabel('T3 [°C]', fontsize=14)
+plt.ylabel('Thermischer Wirkungsgrad', fontsize=14)
 plt.grid(True)
 
+
+plt.show()
+
+plt.figure(5)
+plt.plot(h,f,color='blue')
+plt.title(f"Sirr_gesamt über T3\nfür m_ORC = {m_ORC}kg/s", fontsize=12)
+plt.xlabel('T3 [°C]', fontsize=14)
+plt.ylabel('Sirr_gesamt [W/K] ', fontsize=14)
+plt.grid(True)
+
+plt.show()
+
+plt.figure(6)
+plt.plot(h,c,color='blue')
+plt.title(f"Nettoleistung über T3\nfür m_ORC = {m_ORC}kg/s", fontsize=12)
+plt.xlabel('T3 [°C]', fontsize=14)
+plt.ylabel('Nettoleistung', fontsize=14)
+plt.grid(True)
 
 plt.show()
 
