@@ -43,22 +43,23 @@ k = []
 l = []
 
 
-
+T3_start = 335
+T3_ende = 405
 plt.close('all')
-for T3 in np.arange(340, 400, 5):
+for T3 in np.arange(T3_start, T3_ende, 5):
     fluid = "REFPROP::PROPANE" #REFPROP::PROPANE[0.5]&ISOBUTANE[0.5]
 
     l1 = 29 # m
     l2 = 87.5  # m
     l3 = 68 # m
     l_k1 = 22 #69.6  # m
-    m_Kuehlmittel1 = 444E-3
+    m_Kuehlmittel1 = 238E-3
 
-    m_ORC = 40E-3  # kg/s
-    m_WASSER = 60E-3
+    m_ORC = 30E-3  # kg/s
+    m_WASSER = 60E-3/1.5
     cp_WASSER = 4.1819  # kJ/kg*K
-    m_OEL_2 = 250E-3
-    m_OEL_3 = 60E-3
+    m_OEL_2 = 250E-3/1.5
+    m_OEL_3 = 60E-3/1.5
 
     h_g = CP.PropsSI('H', 'P', 101325, 'Q', 1, fluid)
     h_liq = CP.PropsSI('H', 'P', 101325, 'Q', 0, fluid)
@@ -241,7 +242,21 @@ for T3 in np.arange(340, 400, 5):
     Q_ab1 = m_ORC * (h4 - h1)
 
 
-    Ta_kuehlmittel1 = T4 - 75
+    array = np.linspace(-40,-75,70)
+    temperatures = []
+    for r in np.arange(T3_start,T3_ende):
+        temperatures.append((r, r + 1, array[r - 335]))
+
+    Ta_kuehlmittel1 = None
+
+    for temp_range in temperatures:
+        if temp_range[0] <= T3 < temp_range[1]:
+            Ta_kuehlmittel1 = T4 + temp_range[2]
+            break
+
+
+
+
     ha_kuehlmittel1 = CP.PropsSI('H','T',Ta_kuehlmittel1,'P',p_Kuehlmittel1,kuehlmittel1)
 
 
@@ -322,27 +337,15 @@ ax.set_xlabel('T3 [K]')
 ax.set_ylabel('Sirr [W/K]')
 ax.set_title('Sirr über T3')
 ax.set_xticks(xlabel + barWidth, temperature)
-ax.legend(loc='best')
+ax.legend(loc='upper left')
 
 plt.show()
 
-'''
-#plot1 = plt.bar(h,i, width=barWidth)
-plot2 = plt.bar(h,k, color = 'blue', width=barWidth)
 
-
-plot3 = plt.bar(h,j, color = 'green',width=barWidth)
-
-plot4 = plt.bar(h,m,color = 'red', width=barWidth)
-
-
-plt.legend((plot2[0], plot3[0], plot4[0]), ('S_evap1','S_evap2','S_evap3'))
-plt.show()
-'''
 plt.figure(3)
 plt.plot(h,a,color='blue')
 plt.title(f"Thermischer Wirkungsgrad über T3\nfür m_ORC = {m_ORC}kg/s", fontsize=12)
-plt.xlabel('T3 [°C]', fontsize=14)
+plt.xlabel('T3 [K]', fontsize=14)
 plt.ylabel('Thermischer Wirkungsgrad', fontsize=14)
 plt.grid(True)
 
@@ -351,9 +354,9 @@ plt.show()
 
 plt.figure(5)
 plt.plot(h,f,color='blue')
-plt.title(f"Sirr_gesamt über T3\nfür m_ORC = {m_ORC}kg/s", fontsize=12)
-plt.xlabel('T3 [°C]', fontsize=14)
-plt.ylabel('Sirr_gesamt [W/K] ', fontsize=14)
+plt.title(f"Gesamtentropieerzeugung (Sirr) über T3\nfür m_ORC = {m_ORC}kg/s", fontsize=12)
+plt.xlabel('T3 [K]', fontsize=14)
+plt.ylabel('Sirr [W/K] ', fontsize=14)
 plt.grid(True)
 
 plt.show()
@@ -361,8 +364,8 @@ plt.show()
 plt.figure(6)
 plt.plot(h,c,color='blue')
 plt.title(f"Nettoleistung über T3\nfür m_ORC = {m_ORC}kg/s", fontsize=12)
-plt.xlabel('T3 [°C]', fontsize=14)
-plt.ylabel('Nettoleistung', fontsize=14)
+plt.xlabel('T3 [K]', fontsize=14)
+plt.ylabel('Nettoleistung [W]', fontsize=14)
 plt.grid(True)
 
 plt.show()

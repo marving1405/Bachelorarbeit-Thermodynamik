@@ -84,10 +84,7 @@ speicherfluid1 = "REFPROP::WATER"
 Tlow_H = T2_siedend + 5 #K
 Tlow_L = Tlow_H - ((Q_zu1/1000) / (m_WASSER * cp_WASSER))
 
-
 p_Tank1 = 100000  # Pa
-
-
 
 lambda_Wasser = 0.6
 alpha_a_1 = alpha_outside_tube(d_ai,d_aa,lambda_Wasser)
@@ -216,7 +213,7 @@ p_Kuehlmittel1 = 1500000  # Pa
 h4_siedend = CP.PropsSI('H', 'P', p4, 'Q', 0, fluid)
 T4_siedend = CP.PropsSI('T', 'P', p4, 'H', h4_siedend, fluid)
 Q_ab1 = m_ORC * (h4 - h1)
-Ta_kuehlmittel1 = T4 - 75
+Ta_kuehlmittel1 = T4 - 75 #Temperaturdifferenz anpassen!
 ha_kuehlmittel1 = CP.PropsSI('H', 'P', p_Kuehlmittel1, 'T', Ta_kuehlmittel1, kuehlmittel1)
 he_kuehlmittel1 = ha_kuehlmittel1 - (Q_ab1 / m_Kuehlmittel1)
 Te_kuehlmittel1 = CP.PropsSI('T', 'P', p_Kuehlmittel1, 'H', he_kuehlmittel1, kuehlmittel1)
