@@ -43,9 +43,9 @@ k = []
 l = []
 
 
-p2_start = 400000
-p2_ende = 2000000
-schrittweite = 10000
+p2_start = 1000000
+p2_ende = 1500000
+schrittweite = 50000
 
 
 plt.close('all')
@@ -58,7 +58,7 @@ for p2 in np.arange(p2_start, p2_ende, schrittweite):
     l_k1 = 22 #69.6  # m
     m_Kuehlmittel1 = 240E-3
 
-    m_ORC = 40E-3  # kg/s
+    m_ORC = 20E-3  # kg/s
     m_WASSER = 60E-3
     cp_WASSER = 4.1819  # kJ/kg*K
     m_OEL_2 = 250E-3
@@ -186,7 +186,7 @@ for p2 in np.arange(p2_start, p2_ende, schrittweite):
         '''
 
 
-        T3 = 350  # K
+        T3 = 380  # K
         Thoch_H = T3 + 5  # K
         #Thoch_L = T2_sattdampf + 5 # K pinch
         #dTA_3 = Thoch_L - T2_sattdampf
@@ -275,7 +275,7 @@ for p2 in np.arange(p2_start, p2_ende, schrittweite):
                 break
         '''
 
-        Ta_kuehlmittel1 = T4 - 60
+        Ta_kuehlmittel1 = T4 - 65
 
         ha_kuehlmittel1 = CP.PropsSI('H','T',Ta_kuehlmittel1,'P',p_Kuehlmittel1,kuehlmittel1)
 
