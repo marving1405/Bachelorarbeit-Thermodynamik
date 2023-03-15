@@ -45,7 +45,7 @@ l = []
 x_a = []
 
 plt.close('all')
-for x_a in np.arange(0.2, 0.8, 0.1):
+for x_a in np.arange(0.1, 1.1, 0.1):
     fluid = f"REFPROP::PENTANE[{1-x_a}]&ISOBUTANE[{x_a}]"
 
     l1 = 29 # m
@@ -54,7 +54,7 @@ for x_a in np.arange(0.2, 0.8, 0.1):
     l_k1 = 22 #69.6  # m
     m_Kuehlmittel1 = 88E-3
 
-    m_ORC = 30E-3  # kg/s
+    m_ORC = 40E-3  # kg/s
     m_WASSER = 60E-3
     cp_WASSER = 4.1819  # kJ/kg*K
     m_OEL_2 = 250E-3
@@ -312,14 +312,14 @@ for x_a in np.arange(0.2, 0.8, 0.1):
     m.append(s_evap1[0])
 
 plt.figure(4)
-temperature = (h)
+temperature = (d)
 entropy = {
     's_evap1': m,
     's_evap2': j,
     's_evap3': k,
     's_kond': l,
 }
-xlabel = np.arange(len(h))
+xlabel = np.arange(len(d))
 barWidth = 0.25
 multiplier = 0
 
@@ -331,9 +331,9 @@ for attribute, measurement in entropy.items():
     #ax.bar_label(rects, padding=3)
     multiplier +=1
 
-ax.set_xlabel('T3 [K]')
+ax.set_xlabel('Molenbruch x_a Isobutan')
 ax.set_ylabel('Sirr [W/K]')
-ax.set_title('Sirr über T3')
+ax.set_title('Sirr über Molenbruch')
 ax.set_xticks(xlabel + barWidth, temperature)
 ax.legend(loc='upper left')
 
