@@ -45,7 +45,7 @@ l = []
 x_a = []
 
 plt.close('all')
-for x_a in np.arange(0.1, 1.1, 0.1):
+for x_a in np.arange(0.1, 0.5, 0.1):
     fluid = f"REFPROP::PENTANE[{1-x_a}]&ISOBUTANE[{x_a}]"
 
     l1 = 29 # m
@@ -54,7 +54,7 @@ for x_a in np.arange(0.1, 1.1, 0.1):
     l_k1 = 22 #69.6  # m
     m_Kuehlmittel1 = 88E-3
 
-    m_ORC = 40E-3  # kg/s
+    m_ORC = 30E-3  # kg/s
     m_WASSER = 60E-3
     cp_WASSER = 4.1819  # kJ/kg*K
     m_OEL_2 = 250E-3
@@ -106,7 +106,7 @@ for x_a in np.arange(0.1, 1.1, 0.1):
 
 
     #Tlow_L = T2_siedend + 5  # pinch point temperature = 5K
-    Tlow_H = T2_siedend + 10
+    Tlow_H = T2_siedend + 5
     p_Tank1 = 100000  # Pa
 
 
@@ -131,7 +131,7 @@ for x_a in np.arange(0.1, 1.1, 0.1):
     '''
     #arbeitsfluid2 = shell heat transfer oil s2
 
-    Tmittel_L = T2_siedend + 10  # K
+    Tmittel_L = T2_siedend + 5  # K
     p_Tank2 = 100000  # Pa
     lambda_Oel = 0.129 # also konstant angenommen
     T2_sattdampf = CP.PropsSI('T', 'P', p2, 'Q', 1, fluid)
@@ -169,7 +169,7 @@ for x_a in np.arange(0.1, 1.1, 0.1):
     Auslegung des Wärmeübertragers 3 (Sattdampf zu überhitzten Dampf)
     '''
 
-    T3 = 420 # K
+    T3 = 460 # K
     Thoch_H = T3 + 5  # K
     #Thoch_L = T2_sattdampf + 5 # K pinch
     #dTA_3 = Thoch_L - T2_sattdampf
@@ -299,7 +299,7 @@ for x_a in np.arange(0.1, 1.1, 0.1):
         raise ValueError('Die irreversibel erzeugte Entropie ist kleiner null!')
 
     a.append(eta_th)
-    b.append(Thoch_H-273.15)
+    b.append(T2_sattdampf-T2_siedend)
     c.append(P_netto)
     d.append(x_a)
     f.append(s_irr)
@@ -310,6 +310,16 @@ for x_a in np.arange(0.1, 1.1, 0.1):
     k.append(s_evap3[0])
     l.append(s_kond[0])
     m.append(s_evap1[0])
+
+
+plt.figure(7)
+plt.plot(d,b,color='blue')
+plt.title(f"Temperaturgleit über x_a\nfür m_ORC = {m_ORC}kg/s", fontsize=12)
+plt.xlabel('x_a []', fontsize=14)
+plt.ylabel('Temperaturgleit', fontsize=14)
+plt.grid(True)
+plt.show()
+
 
 plt.figure(4)
 temperature = (d)

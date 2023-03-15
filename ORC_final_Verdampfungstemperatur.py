@@ -43,9 +43,9 @@ k = []
 l = []
 
 
-p2_start = 1000000
-p2_ende = 1500000
-schrittweite = 50000
+p2_start = 500000
+p2_ende = 1550000
+schrittweite = 100000
 
 
 plt.close('all')
@@ -186,7 +186,7 @@ for p2 in np.arange(p2_start, p2_ende, schrittweite):
         '''
 
 
-        T3 = 380  # K
+        T3 = 400  # K
         Thoch_H = T3 + 5  # K
         #Thoch_L = T2_sattdampf + 5 # K pinch
         #dTA_3 = Thoch_L - T2_sattdampf
@@ -250,7 +250,7 @@ for p2 in np.arange(p2_start, p2_ende, schrittweite):
     s4_sattdampf = CP.PropsSI('S', 'P', p4, 'H', h4_sattdampf, fluid)
 
     i_k = 0
-    while i_k < 3:
+    while i_k < 1:
         '''
         Kondensator 1, ÜD -> SD, Kühlmedium R23
         '''
@@ -275,7 +275,7 @@ for p2 in np.arange(p2_start, p2_ende, schrittweite):
                 break
         '''
 
-        Ta_kuehlmittel1 = T4 - 65
+        Ta_kuehlmittel1 = T4 - 90
 
         ha_kuehlmittel1 = CP.PropsSI('H','T',Ta_kuehlmittel1,'P',p_Kuehlmittel1,kuehlmittel1)
 
@@ -335,7 +335,7 @@ for p2 in np.arange(p2_start, p2_ende, schrittweite):
     m.append(s_evap1[0])
 
 plt.figure(4)
-temperature = (h)
+temperature = list(map(int,d))
 entropy = {
     's_evap1': m,
     's_evap2': j,
@@ -376,7 +376,7 @@ plt.figure(7)
 plt.plot(d,g,color='blue')
 plt.title(f"p2 über T2_b\nfür m_ORC = {m_ORC}kg/s", fontsize=12)
 plt.xlabel('T2_b [K]', fontsize=14)
-plt.ylabel('p2', fontsize=14)
+plt.ylabel('p2 [Pa]', fontsize=14)
 plt.grid(True)
 
 

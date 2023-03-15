@@ -247,7 +247,7 @@ for T3 in np.arange(T3_start, T3_ende, 5):
     Kondensator 1, ÜD -> SD, Kühlmedium R23
     '''
     i_k = 0
-    while i_k < 3:
+    while i_k < 1:
 
         kuehlmittel1 = "REFPROP::R23"
         p_Kuehlmittel1 = 1500000  # Pa
@@ -256,7 +256,7 @@ for T3 in np.arange(T3_start, T3_ende, 5):
         Q_ab1 = m_ORC * (h4 - h1)
 
 
-        array = np.linspace(-40,-75,70)
+        array = np.linspace(-40,-77,70)
         temperatures = []
         for r in np.arange(T3_start,T3_ende):
             temperatures.append((r, r + 1, array[r - 335]))
@@ -362,6 +362,7 @@ plt.title(f"Thermischer Wirkungsgrad über T3\nfür m_ORC = {m_ORC}kg/s", fontsi
 plt.xlabel('T3 [K]', fontsize=14)
 plt.ylabel('Thermischer Wirkungsgrad', fontsize=14)
 plt.grid(True)
+
 
 
 plt.show()
