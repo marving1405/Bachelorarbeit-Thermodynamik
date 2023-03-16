@@ -58,7 +58,7 @@ for p2 in np.arange(p2_start, p2_ende, schrittweite):
     l_k1 = 22 #69.6  # m
     m_Kuehlmittel1 = 240E-3
 
-    m_ORC = 20E-3  # kg/s
+    m_ORC = 10E-3  # kg/s
     m_WASSER = 60E-3
     cp_WASSER = 4.1819  # kJ/kg*K
     m_OEL_2 = 250E-3
@@ -275,7 +275,7 @@ for p2 in np.arange(p2_start, p2_ende, schrittweite):
                 break
         '''
 
-        Ta_kuehlmittel1 = T4 - 90
+        Ta_kuehlmittel1 = T4 - 95
 
         ha_kuehlmittel1 = CP.PropsSI('H','T',Ta_kuehlmittel1,'P',p_Kuehlmittel1,kuehlmittel1)
 
