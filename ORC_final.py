@@ -44,7 +44,7 @@ l = []
 
 
 T3_start = 335
-T3_ende = 405
+T3_ende = 375
 plt.close('all')
 for T3 in np.arange(T3_start, T3_ende, 5):
     fluid = "REFPROP::PROPANE" #REFPROP::PROPANE[0.5]&ISOBUTANE[0.5]
@@ -55,7 +55,7 @@ for T3 in np.arange(T3_start, T3_ende, 5):
     l_k1 = 22 #69.6  # m
     m_Kuehlmittel1 = 172E-3
 
-    m_ORC = 40E-3  # kg/s
+    m_ORC = 10E-3  # kg/s
     m_WASSER = 60E-3
     cp_WASSER = 4.1819  # kJ/kg*K
     m_OEL_2 = 250E-3
@@ -110,7 +110,7 @@ for T3 in np.arange(T3_start, T3_ende, 5):
         speicherfluid1 = "REFPROP::WATER"
 
         # Tlow_L = T2_siedend + 5  # pinch point temperature = 5K
-        Tlow_H = T2_siedend + 5
+        Tlow_H = T2_siedend + 2
         p_Tank1 = 100000  # Pa
 
         lambda_Wasser = 0.6
@@ -140,7 +140,7 @@ for T3 in np.arange(T3_start, T3_ende, 5):
         '''
         #arbeitsfluid2 = shell heat transfer oil s2
 
-        Tmittel_L = T2_siedend + 5  # K
+        Tmittel_L = T2_siedend + 1  # K
         p_Tank2 = 100000  # Pa
         lambda_Oel = 0.129 # also konstant angenommen
         T2_sattdampf = CP.PropsSI('T', 'P', p2, 'Q', 1, fluid)
@@ -183,7 +183,7 @@ for T3 in np.arange(T3_start, T3_ende, 5):
         '''
 
         #T3 = T2_sattdampf + 20  # K
-        Thoch_H = T3 + 5  # K
+        Thoch_H = T3 + 1  # K
         #Thoch_L = T2_sattdampf + 5 # K pinch
         #dTA_3 = Thoch_L - T2_sattdampf
         dTB_3 = Thoch_H - T3
@@ -487,7 +487,7 @@ plt.plot(x_sec_sh, y_sec_sh, 'b')
 
 plt.show()
 
-eta_C = 1 - T1/T3
+eta_C = 1 - Ta_kuehlmittel1/Thoch_H
 #plt.plot(h,a,marker = '*',color='blue')
 
 
