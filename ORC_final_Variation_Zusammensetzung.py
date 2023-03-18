@@ -45,8 +45,8 @@ l = []
 x_a = []
 
 plt.close('all')
-for x_a in np.arange(0, 0.6, 0.1):
-    fluid = f"REFPROP::PROPANE[{1-x_a}]&ISOBUTANE[{x_a}]"
+for x_a in np.arange(0, 1.1, 0.1):
+    fluid = f"REFPROP::PROPANE[{1-x_a}]&ISOBUTANE[{round(x_a,1)}]"
 
     l1 = 29 # m
     l2 = 87.5  # m
@@ -54,7 +54,7 @@ for x_a in np.arange(0, 0.6, 0.1):
     l_k1 = 22 #69.6  # m
     m_Kuehlmittel1 = 88E-3
 
-    m_ORC = 30E-3  # kg/s
+    m_ORC = 40E-3  # kg/s
     m_WASSER = 60E-3
     cp_WASSER = 4.1819  # kJ/kg*K
     m_OEL_2 = 250E-3
@@ -69,12 +69,12 @@ for x_a in np.arange(0, 0.6, 0.1):
     Pumpe: Zustand 1 so anpassen, dass Fluid bei gewünschtem Druck unterkühlt vorliegt
     """
     p1 = 100000  # Pa
-    T1 = 230 # Kelvin
+    T1 = 229 # Kelvin
     etaP = 0.9  # wird hier als konstant angesehen
 
     h1 = CP.PropsSI('H', 'T', T1, 'P', p1, fluid)
     s1 = CP.PropsSI('S', 'T', T1, 'P', p1, fluid)
-    p2 = 1500000  # Pa
+    p2 = 2000000  # Pa
     v1 = 1 / (CP.PropsSI('D', 'P', p1, 'T', T1, fluid))  # m3/kg
 
     w_p = (v1 * (p2 - p1)) / etaP # J
@@ -108,7 +108,7 @@ for x_a in np.arange(0, 0.6, 0.1):
 
 
         #Tlow_L = T2_siedend + 5  # pinch point temperature = 5K
-        Tlow_H = T2_siedend + 5
+        Tlow_H = T2_siedend + 10
         p_Tank1 = 100000  # Pa
 
 
@@ -138,7 +138,7 @@ for x_a in np.arange(0, 0.6, 0.1):
         '''
         #arbeitsfluid2 = shell heat transfer oil s2
 
-        Tmittel_L = T2_siedend + 5  # K
+        Tmittel_L = T2_siedend + 10  # K
         p_Tank2 = 100000  # Pa
         lambda_Oel = 0.129 # also konstant angenommen
         T2_sattdampf = CP.PropsSI('T', 'P', p2, 'Q', 1, fluid)
@@ -255,7 +255,7 @@ for x_a in np.arange(0, 0.6, 0.1):
 
 
 
-        Ta_kuehlmittel1 = T4 - 70
+        Ta_kuehlmittel1 = T4 - 75
         ha_kuehlmittel1 = CP.PropsSI('H','T',Ta_kuehlmittel1,'P',p_Kuehlmittel1,kuehlmittel1)
 
 
@@ -303,7 +303,7 @@ for x_a in np.arange(0, 0.6, 0.1):
     a.append(eta_th)
     b.append(T2_sattdampf-T2_siedend)
     c.append(P_netto)
-    d.append(x_a)
+    d.append(round(x_a,1))
     f.append(s_irr)
     g.append(p2)
     h.append(T3)
