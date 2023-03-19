@@ -113,7 +113,7 @@ for p2 in np.arange(p2_start, p2_ende, schrittweite):
 
 
         #Tlow_L = T2_siedend + 5  # pinch point temperature = 5K
-        Tlow_H = T2_siedend + 2
+        Tlow_H = T2_siedend + 5
         p_Tank1 = 100000  # Pa
 
 
@@ -143,7 +143,7 @@ for p2 in np.arange(p2_start, p2_ende, schrittweite):
         '''
         #arbeitsfluid2 = shell heat transfer oil s2
 
-        Tmittel_L = T2_siedend + 1  # K
+        Tmittel_L = T2_siedend + 5  # K
         p_Tank2 = 100000  # Pa
         lambda_Oel = 0.129 # also konstant angenommen
         T2_sattdampf = CP.PropsSI('T', 'P', p2, 'Q', 1, fluid)
@@ -187,7 +187,7 @@ for p2 in np.arange(p2_start, p2_ende, schrittweite):
 
 
         T3 = 400  # K
-        Thoch_H = T3 + 1  # K
+        Thoch_H = T3 + 5  # K
         #Thoch_L = T2_sattdampf + 5 # K pinch
         #dTA_3 = Thoch_L - T2_sattdampf
         dTB_3 = Thoch_H - T3
@@ -275,7 +275,7 @@ for p2 in np.arange(p2_start, p2_ende, schrittweite):
                 break
         '''
 
-        Ta_kuehlmittel1 = T4 - 85
+        Ta_kuehlmittel1 = T4 - 95
 
         ha_kuehlmittel1 = CP.PropsSI('H','T',Ta_kuehlmittel1,'P',p_Kuehlmittel1,kuehlmittel1)
 
