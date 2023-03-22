@@ -45,8 +45,8 @@ l = []
 x_a = []
 
 plt.close('all')
-for x_a in np.arange(0, 1.1, 0.1):
-    fluid = f"REFPROP::PROPANE[{1-x_a}]&ISOBUTANE[{round(x_a,1)}]"
+for x_a in np.arange(0, 0.6, 0.1):
+    fluid = f"REFPROP::PROPANE[{round(1-x_a,1)}]&ISOBUTANE[{round(x_a,1)}]"
 
     l1 = 29 # m
     l2 = 87.5  # m
