@@ -41,11 +41,13 @@ m = []
 j = []
 k = []
 l = []
+s = []
+t = []
 
 x_a = []
 
 plt.close('all')
-for x_a in np.arange(0, 0.6, 0.1):
+for x_a in np.arange(0, 1.1, 0.1):
     fluid = f"REFPROP::PROPANE[{round(1-x_a,1)}]&ISOBUTANE[{round(x_a,1)}]"
 
     l1 = 29 # m
@@ -108,7 +110,7 @@ for x_a in np.arange(0, 0.6, 0.1):
 
 
         #Tlow_L = T2_siedend + 5  # pinch point temperature = 5K
-        Tlow_H = T2_siedend + 10
+        Tlow_H = T2_siedend + 5
         p_Tank1 = 100000  # Pa
 
 
@@ -138,7 +140,7 @@ for x_a in np.arange(0, 0.6, 0.1):
         '''
         #arbeitsfluid2 = shell heat transfer oil s2
 
-        Tmittel_L = T2_siedend + 10  # K
+        Tmittel_L = T2_siedend + 5  # K
         p_Tank2 = 100000  # Pa
         lambda_Oel = 0.129 # also konstant angenommen
         T2_sattdampf = CP.PropsSI('T', 'P', p2, 'Q', 1, fluid)
@@ -312,6 +314,8 @@ for x_a in np.arange(0, 0.6, 0.1):
     k.append(s_evap3[0])
     l.append(s_kond[0])
     m.append(s_evap1[0])
+    s.append(Q_zu2)
+    t.append(Tmittel_H-Tmittel_L)
 
 
 plt.figure(7)
@@ -321,6 +325,23 @@ plt.xlabel('Massenanteil Isobutan []', fontsize=14)
 plt.ylabel('Temperaturgleit [K]', fontsize=14)
 plt.grid(True)
 plt.show()
+
+plt.figure(8)
+plt.plot(d,s,color='blue')
+plt.title(f"Q_zu2 für Massenanteil Isobutan\nfür m_ORC = {m_ORC}kg/s", fontsize=12)
+plt.xlabel('Massenanteil Isobutan []', fontsize=14)
+plt.ylabel('Q_zu2 [W]', fontsize=14)
+plt.grid(True)
+plt.show()
+
+plt.figure(9)
+plt.plot(d,t,color='blue')
+plt.title(f"delta_T_mittel für Massenanteil Isobutan\nfür m_ORC = {m_ORC}kg/s", fontsize=12)
+plt.xlabel('Massenanteil Isobutan []', fontsize=14)
+plt.ylabel('Temperaturdifferenz [K]', fontsize=14)
+plt.grid(True)
+plt.show()
+
 
 
 plt.figure(4)
