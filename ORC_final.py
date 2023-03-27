@@ -55,7 +55,7 @@ for T3 in np.arange(T3_start, T3_ende, 5):
     l_k1 = 22 #69.6  # m
     m_Kuehlmittel1 = 172E-3
 
-    m_ORC = 40E-3  # kg/s
+    m_ORC = 30E-3  # kg/s
     m_WASSER = 60E-3
     cp_WASSER = 4.1819  # kJ/kg*K
     m_OEL_2 = 250E-3
