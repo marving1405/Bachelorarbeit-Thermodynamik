@@ -41,12 +41,15 @@ m = []
 j = []
 k = []
 l = []
+s = []
+t = []
+u = []
 
 x_a = []
 
 plt.close('all')
 for x_a in np.arange(0, 1.1, 0.1):
-    fluid = f"REFPROP::PROPANE[{1-x_a}]&ISOBUTANE[{round(x_a,1)}]"
+    fluid = f"REFPROP::PROPANE[{round(1-x_a,1)}]&ISOBUTANE[{round(x_a,1)}]"
 
     l1 = 29 # m
     l2 = 87.5  # m
@@ -108,7 +111,7 @@ for x_a in np.arange(0, 1.1, 0.1):
 
 
         #Tlow_L = T2_siedend + 5  # pinch point temperature = 5K
-        Tlow_H = T2_siedend + 10
+        Tlow_H = T2_siedend + 5
         p_Tank1 = 100000  # Pa
 
 
@@ -138,7 +141,7 @@ for x_a in np.arange(0, 1.1, 0.1):
         '''
         #arbeitsfluid2 = shell heat transfer oil s2
 
-        Tmittel_L = T2_siedend + 10  # K
+        Tmittel_L = T2_siedend + 5  # K
         p_Tank2 = 100000  # Pa
         lambda_Oel = 0.129 # also konstant angenommen
         T2_sattdampf = CP.PropsSI('T', 'P', p2, 'Q', 1, fluid)
@@ -295,6 +298,9 @@ for x_a in np.arange(0, 1.1, 0.1):
     s_irr = s_evap1 + s_evap2 + s_evap3 + s_kond
     #s_irr = -((Q_zu1 / Tm1) + (Q_zu2 / Tm2) + (Q_zu3 / Tm3) - (Q_ab1 / Tmk1))
 
+    h_g1 = CP.PropsSI('H', 'P', p2, 'Q', 1, fluid)
+    h_liq1 = CP.PropsSI('H', 'P', p2, 'Q', 0, fluid)
+    h_v1 = h_g1 - h_liq1  # Vedampfungsenthalpie
 
 
     if s_irr < 0:
@@ -312,6 +318,9 @@ for x_a in np.arange(0, 1.1, 0.1):
     k.append(s_evap3[0])
     l.append(s_kond[0])
     m.append(s_evap1[0])
+    s.append(Q_zu2)
+    t.append(Tmittel_H-Tmittel_L)
+    u.append(h_v1)
 
 
 plt.figure(7)
@@ -321,6 +330,31 @@ plt.xlabel('Massenanteil Isobutan []', fontsize=14)
 plt.ylabel('Temperaturgleit [K]', fontsize=14)
 plt.grid(True)
 plt.show()
+
+plt.figure(8)
+plt.plot(d,s,color='blue')
+plt.title(f"Q_zu2 für Massenanteil Isobutan\nfür m_ORC = {m_ORC}kg/s", fontsize=12)
+plt.xlabel('Massenanteil Isobutan []', fontsize=14)
+plt.ylabel('Q_zu2 [W]', fontsize=14)
+plt.grid(True)
+plt.show()
+
+plt.figure(9)
+plt.plot(d,t,color='blue')
+plt.title(f"delta_T_mittel für Massenanteil Isobutan\nfür m_ORC = {m_ORC}kg/s", fontsize=12)
+plt.xlabel('Massenanteil Isobutan []', fontsize=14)
+plt.ylabel('Temperaturdifferenz [K]', fontsize=14)
+plt.grid(True)
+plt.show()
+
+plt.figure(10)
+plt.plot(d,u,color='blue')
+plt.title(f"Verdampfungsenthalpie für Massenanteil Isobutan\nfür m_ORC = {m_ORC}kg/s", fontsize=12)
+plt.xlabel('Massenanteil Isobutan []', fontsize=14)
+plt.ylabel('Verdampfungsenthalpie [J]', fontsize=14)
+plt.grid(True)
+plt.show()
+
 
 
 plt.figure(4)
