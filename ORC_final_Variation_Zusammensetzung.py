@@ -325,9 +325,9 @@ for x_a in np.arange(0, 1.1, 0.1):
 
 plt.figure(7)
 plt.plot(d,b,color='blue')
-plt.title(f"Temperaturgleit für Molenbruch Isobutan\nfür m_ORC = {m_ORC}kg/s", fontsize=12)
-plt.xlabel('Molenbruch Isobutan x_a', fontsize=14)
-plt.ylabel('Temperaturgleit [K]', fontsize=14)
+plt.title(f"Temperaturgleit für Molenbruch Isobutan\nfür m_ORC = {m_ORC}kg/s", fontsize=18)
+plt.xlabel('Molenbruch Isobutan x_a', fontsize=18)
+plt.ylabel('Temperaturgleit [K]', fontsize=18)
 plt.grid(True)
 plt.show()
 

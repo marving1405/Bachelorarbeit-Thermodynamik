@@ -355,10 +355,10 @@ for attribute, measurement in entropy.items():
     multiplier +=1
 
 ax.set_xlabel('Verdampfungstemperatur T_2b [K]', fontsize=18)
-ax.set_ylabel('Erzeugte Entropieströme [W/K]', fontsize=18)
+ax.set_ylabel('Entropieströme [W/K]', fontsize=18)
 plt.yticks(fontsize=10)
 
-ax.set_title('Irreversibel erzeugte Entropieströme', fontsize=18)
+ax.set_title('Entropieströme über Verdampfungstemperatur', fontsize=18)
 ax.set_xticks(xlabel + barWidth, temperature, fontsize=10)
 ax.legend(loc='upper left')
 
@@ -386,9 +386,9 @@ plt.show()
 
 plt.figure(5)
 plt.plot(d,f,color='blue')
-plt.title(f"Gesamtentropiestrom über T2_b\nfür m_ORC = {m_ORC*1000}g/s", fontsize=18)
+plt.title(f"Gesamtentropieerzeugung (Sirr) über T2_b\nfür m_ORC = {m_ORC*1000}g/s", fontsize=18)
 plt.xlabel('Verdampfungstemperatur T2_b [K]', fontsize=16)
-plt.ylabel('Erzeugter Gesamtentropiestrom [W/K] ', fontsize=16)
+plt.ylabel('Gesamtentropiestrom [W/K] ', fontsize=16)
 plt.grid(True)
 
 plt.show()
