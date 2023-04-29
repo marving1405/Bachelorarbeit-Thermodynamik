@@ -48,7 +48,7 @@ u = []
 x_a = []
 
 plt.close('all')
-for x_a in np.arange(0, 0.4, 0.1):
+for x_a in np.arange(0, 1.1, 0.1):
     fluid = f"REFPROP::PROPANE[{round(1-x_a,1)}]&ISOBUTANE[{round(x_a,1)}]"
 
     l1 = 29 # m
@@ -258,7 +258,7 @@ for x_a in np.arange(0, 0.4, 0.1):
 
 
 
-        Ta_kuehlmittel1 = T4 - 80
+        Ta_kuehlmittel1 = T4 - 75
         ha_kuehlmittel1 = CP.PropsSI('H','T',Ta_kuehlmittel1,'P',p_Kuehlmittel1,kuehlmittel1)
 
 
@@ -326,8 +326,8 @@ for x_a in np.arange(0, 0.4, 0.1):
 plt.figure(7)
 plt.plot(d,b,color='blue')
 plt.title(f"Temperaturgleit für Molenbruch Isobutan\nfür m_ORC = {m_ORC*1000}g/s", fontsize=18)
-plt.xlabel('Molenbruch Isobutan x_a', fontsize=18)
-plt.ylabel('Temperaturgleit [K]', fontsize=18)
+plt.xlabel('Molenbruch Isobutan x_a', fontsize=16)
+plt.ylabel('Temperaturgleit [K]', fontsize=16)
 plt.xticks(fontsize=14)
 plt.yticks(fontsize=14)
 plt.grid(True)
@@ -336,10 +336,10 @@ plt.show()
 plt.figure(8)
 plt.plot(d,s,color='blue')
 plt.title(f"Q_zu2 für Molenbruch Isobutan\nfür m_ORC = {m_ORC*1000}g/s", fontsize=18)
-plt.xlabel('Molenbruch Isobutan x_a', fontsize=16)
-plt.ylabel('Q_zu2 [W]', fontsize=16)
-plt.xticks(fontsize=14)
-plt.yticks(fontsize=14)
+plt.xlabel('Molenbruch Isobutan x_a', fontsize=13)
+plt.ylabel('Q_zu2 [W]', fontsize=13)
+plt.xticks(fontsize=11)
+plt.yticks(fontsize=11)
 plt.grid(True)
 plt.show()
 

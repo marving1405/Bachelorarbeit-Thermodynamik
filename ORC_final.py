@@ -55,7 +55,7 @@ for T3 in np.arange(T3_start, T3_ende, 5):
     l_k1 = 22 #69.6  # m
     m_Kuehlmittel1 = 172E-3
 
-    m_ORC = 40E-3  # kg/s
+    m_ORC = 10E-3  # kg/s
     m_WASSER = 60E-3
     cp_WASSER = 4.1819  # kJ/kg*K
     m_OEL_2 = 250E-3
@@ -110,7 +110,7 @@ for T3 in np.arange(T3_start, T3_ende, 5):
         speicherfluid1 = "REFPROP::WATER"
 
         # Tlow_L = T2_siedend + 5  # pinch point temperature = 5K
-        Tlow_H = T2_siedend + 5
+        Tlow_H = T2_siedend + 1
         p_Tank1 = 100000  # Pa
 
         lambda_Wasser = 0.6
@@ -140,7 +140,7 @@ for T3 in np.arange(T3_start, T3_ende, 5):
         '''
         #arbeitsfluid2 = shell heat transfer oil s2
 
-        Tmittel_L = T2_siedend + 5  # K
+        Tmittel_L = T2_siedend + 1  # K
         p_Tank2 = 100000  # Pa
         lambda_Oel = 0.129 # also konstant angenommen
         T2_sattdampf = CP.PropsSI('T', 'P', p2, 'Q', 1, fluid)
@@ -183,7 +183,7 @@ for T3 in np.arange(T3_start, T3_ende, 5):
         '''
 
         #T3 = T2_sattdampf + 20  # K
-        Thoch_H = T3 + 5  # K
+        Thoch_H = T3 + 1  # K
         #Thoch_L = T2_sattdampf + 5 # K pinch
         #dTA_3 = Thoch_L - T2_sattdampf
         dTB_3 = Thoch_H - T3
@@ -362,6 +362,8 @@ plt.plot(h,a,color='blue')
 plt.title(f"Thermischer Wirkungsgrad über T3\nfür m_ORC = {m_ORC*1000}g/s", fontsize=18)
 plt.xlabel('Überhitzungstemperatur T3 [K]', fontsize=16)
 plt.ylabel('Thermischer Wirkungsgrad', fontsize=16)
+plt.xticks(fontsize=11)
+plt.yticks(fontsize=11)
 plt.grid(True)
 
 
@@ -373,6 +375,8 @@ plt.plot(h,f,color='blue')
 plt.title(f"Gesamtentropieerzeugung (Sirr) über T3\nfür m_ORC = {m_ORC*1000}g/s", fontsize=18)
 plt.xlabel('Überhitzungstemperatur T3 [K]', fontsize=16)
 plt.ylabel('Gesamtentropiestrom [W/K] ', fontsize=16)
+plt.xticks(fontsize=11)
+plt.yticks(fontsize=11)
 plt.grid(True)
 
 plt.show()
@@ -382,6 +386,8 @@ plt.plot(h,c,color='blue')
 plt.title(f"Nettoleistung über T3\nfür m_ORC = {m_ORC*1000}g/s", fontsize=18)
 plt.xlabel('Überhitzungstemperatur T3 [K]', fontsize=16)
 plt.ylabel('Nettoleistung [W]', fontsize=16)
+plt.xticks(fontsize=11)
+plt.yticks(fontsize=11)
 plt.grid(True)
 
 plt.show()
