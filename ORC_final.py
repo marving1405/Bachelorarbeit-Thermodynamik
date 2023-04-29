@@ -330,10 +330,10 @@ for T3 in np.arange(T3_start, T3_ende, 5):
 plt.figure(4)
 temperature = (h)
 entropy = {
-    's_evap1': m,
-    's_evap2': j,
-    's_evap3': k,
-    's_kond': l,
+    'S_evap1': m,
+    'S_evap2': j,
+    'S_evap3': k,
+    'S_kond': l,
 }
 xlabel = np.arange(len(h))
 barWidth = 0.25
@@ -347,10 +347,11 @@ for attribute, measurement in entropy.items():
     #ax.bar_label(rects, padding=3)
     multiplier +=1
 
-ax.set_xlabel('T3 [K]')
-ax.set_ylabel('Sirr [W/K]')
-ax.set_title('Sirr über T3')
-ax.set_xticks(xlabel + barWidth, temperature)
+ax.set_xlabel('Überhitzungstemperatur T3 [K]',fontsize=18)
+ax.set_ylabel('Entropieströme [W/K]', fontsize=18)
+plt.yticks(fontsize=11)
+ax.set_title('Entropieströme über Überhitzungstemperatur', fontsize=17)
+ax.set_xticks(xlabel + barWidth, temperature, fontsize=11)
 ax.legend(loc='upper left')
 
 plt.show()
@@ -358,9 +359,9 @@ plt.show()
 
 plt.figure(3)
 plt.plot(h,a,color='blue')
-plt.title(f"Thermischer Wirkungsgrad über T3\nfür m_ORC = {m_ORC}kg/s", fontsize=12)
-plt.xlabel('T3 [K]', fontsize=14)
-plt.ylabel('Thermischer Wirkungsgrad', fontsize=14)
+plt.title(f"Thermischer Wirkungsgrad über T3\nfür m_ORC = {m_ORC*1000}g/s", fontsize=18)
+plt.xlabel('Überhitzungstemperatur T3 [K]', fontsize=16)
+plt.ylabel('Thermischer Wirkungsgrad', fontsize=16)
 plt.grid(True)
 
 
@@ -369,18 +370,18 @@ plt.show()
 
 plt.figure(5)
 plt.plot(h,f,color='blue')
-plt.title(f"Gesamtentropieerzeugung (Sirr) über T3\nfür m_ORC = {m_ORC}kg/s", fontsize=12)
-plt.xlabel('T3 [K]', fontsize=14)
-plt.ylabel('Sirr [W/K] ', fontsize=14)
+plt.title(f"Gesamtentropieerzeugung (Sirr) über T3\nfür m_ORC = {m_ORC*1000}g/s", fontsize=18)
+plt.xlabel('Überhitzungstemperatur T3 [K]', fontsize=16)
+plt.ylabel('Gesamtentropiestrom [W/K] ', fontsize=16)
 plt.grid(True)
 
 plt.show()
 
 plt.figure(6)
 plt.plot(h,c,color='blue')
-plt.title(f"Nettoleistung über T3\nfür m_ORC = {m_ORC}kg/s", fontsize=12)
-plt.xlabel('T3 [K]', fontsize=14)
-plt.ylabel('Nettoleistung [W]', fontsize=14)
+plt.title(f"Nettoleistung über T3\nfür m_ORC = {m_ORC*1000}g/s", fontsize=18)
+plt.xlabel('Überhitzungstemperatur T3 [K]', fontsize=16)
+plt.ylabel('Nettoleistung [W]', fontsize=16)
 plt.grid(True)
 
 plt.show()
@@ -434,8 +435,8 @@ for i in range(len(x2)):
     plt.subplot(111)
     plt.plot(x2[i], y[i], '*', markersize=15)
     plt.annotate(point_label[i], (x2[i]+25, y[i]), fontsize=12)
-    plt.xlabel("h_dot in J/s")
-    plt.ylabel("T in K")
+    plt.xlabel("H in W",fontsize=18)
+    plt.ylabel("T in K",fontsize=18)
     plt.legend()
 
 # Berechnung des Nassdampfbereichs #
@@ -449,10 +450,10 @@ for t_i in t_step:
     h_j.append(h_i2)
 
 plt.plot(np.array(h_i) * m_ORC, t_step, 'k-')
-plt.plot(np.array(h_j) * m_ORC, t_step, 'k-', label="wet steam region")
+plt.plot(np.array(h_j) * m_ORC, t_step, 'k-', label="Nassdampfgebiet")
 #plt.xlabel('h in J/kg')
 #plt.ylabel('T in K')
-plt.title('T-h-Diagramm für ' + fluid)
+plt.title('T-H-Diagramm für Prozessfluid Propan', fontsize=18)
 
 # Berechnung Isobare #
 h_step = np.linspace(0, 900000, 100)
@@ -462,7 +463,7 @@ for px in [p1, p2]:
         t_iso = CP.PropsSI('T', 'H', hi, 'P', px, fluid)
         t_isobar.append(t_iso)
 
-    plt.plot(h_step * m_ORC, t_isobar, 'b:', label="isobare")
+    plt.plot(h_step * m_ORC, t_isobar, '0.7', linestyle=":")
 plt.legend()
 
 # adding secondary fluids to plot figure 2
@@ -475,19 +476,21 @@ plt.legend()
 
 x_sec_sc = np.linspace(h3 * m_ORC, (h3 + (h2_sattdampf - h3)) * m_ORC, 100)
 y_sec_sc = np.linspace(Thoch_H, Thoch_L, 100)
-plt.plot(x_sec_sc, y_sec_sc, 'r')
+plt.plot(x_sec_sc, y_sec_sc, 'r',label="Wärmeübertrager 3")
 
 x_sec_ws = np.linspace(h2_sattdampf * m_ORC, (h2_sattdampf + (h2_siedend - h2_sattdampf)) * m_ORC, 100)
 y_sec_ws = np.linspace(Tmittel_H, Tmittel_L, 100)
-plt.plot(x_sec_ws, y_sec_ws, 'g')
+plt.plot(x_sec_ws, y_sec_ws, 'g',label="Wärmeübertrager 2")
 
 x_sec_sh = np.linspace(h2_siedend * m_ORC, (h2_siedend + (h2 - h2_siedend)) * m_ORC, 100)
 y_sec_sh = np.linspace(Tlow_H, Tlow_L, 100)
-plt.plot(x_sec_sh, y_sec_sh, 'b')
-
+plt.plot(x_sec_sh, y_sec_sh, 'b',label="Wärmeübertrager 1")
+plt.xticks(fontsize=12)
+plt.yticks(fontsize=12)
+plt.legend()
 plt.show()
 
-eta_C = 1 - Ta_kuehlmittel1/Thoch_H
+eta_C = 1 - Te_kuehlmittel1/Thoch_H
 #plt.plot(h,a,marker = '*',color='blue')
 
 

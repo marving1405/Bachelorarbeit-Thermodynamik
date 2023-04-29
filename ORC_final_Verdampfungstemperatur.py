@@ -356,10 +356,10 @@ for attribute, measurement in entropy.items():
 
 ax.set_xlabel('Verdampfungstemperatur T_2b [K]', fontsize=18)
 ax.set_ylabel('Entropieströme [W/K]', fontsize=18)
-plt.yticks(fontsize=10)
+plt.yticks(fontsize=11)
 
-ax.set_title('Entropieströme über Verdampfungstemperatur', fontsize=18)
-ax.set_xticks(xlabel + barWidth, temperature, fontsize=10)
+ax.set_title('Entropieströme über Verdampfungstemperatur', fontsize=17)
+ax.set_xticks(xlabel + barWidth, temperature, fontsize=11)
 ax.legend(loc='upper left')
 
 plt.show()
@@ -368,8 +368,10 @@ plt.show()
 plt.figure(3)
 plt.plot(d,a,color='blue')
 plt.title(f"Thermischer Wirkungsgrad über T2_b\nfür m_ORC = {m_ORC*1000}g/s", fontsize=18)
-plt.xlabel('Verdampfungstemperatur T2_b [K]', fontsize=18)
-plt.ylabel('Thermischer Wirkungsgrad', fontsize=18)
+plt.xlabel('Verdampfungstemperatur T2_b [K]', fontsize=16)
+plt.ylabel('Thermischer Wirkungsgrad', fontsize=16)
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
 plt.grid(True)
 
 plt.show()
@@ -389,6 +391,8 @@ plt.plot(d,f,color='blue')
 plt.title(f"Gesamtentropieerzeugung (Sirr) über T2_b\nfür m_ORC = {m_ORC*1000}g/s", fontsize=18)
 plt.xlabel('Verdampfungstemperatur T2_b [K]', fontsize=16)
 plt.ylabel('Gesamtentropiestrom [W/K] ', fontsize=16)
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
 plt.grid(True)
 
 plt.show()
@@ -398,6 +402,8 @@ plt.plot(d,c,color='blue')
 plt.title(f"Nettoleistung über T2_b\nfür m_ORC = {m_ORC*1000}g/s", fontsize=18)
 plt.xlabel('Verdmpfungstemperatur T2_b [K]', fontsize=16)
 plt.ylabel('Nettoleistung [W]', fontsize=16)
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
 plt.grid(True)
 
 plt.show()
@@ -451,7 +457,7 @@ for i in range(len(x2)):
     plt.subplot(111)
     plt.plot(x2[i], y[i], '*', markersize=15)
     plt.annotate(point_label[i], (x2[i]+25, y[i]), fontsize=12)
-    plt.xlabel("H\u0307 in W",fontsize=18)
+    plt.xlabel("H in W",fontsize=18)
     plt.ylabel("T in K",fontsize=18)
     plt.legend()
 
@@ -469,7 +475,7 @@ plt.plot(np.array(h_i) * m_ORC, t_step, 'k-')
 plt.plot(np.array(h_j) * m_ORC, t_step, 'k-', label="Nassdampfgebiet")
 #plt.xlabel('h in J/kg')
 #plt.ylabel('T in K')
-plt.title('T-H\u0307-Diagramm für Prozessfluid Propan', fontsize=18)
+plt.title('T-H-Diagramm für Prozessfluid Propan', fontsize=18)
 
 
 # Berechnung Isobare #
@@ -503,6 +509,8 @@ x_sec_sh = np.linspace(h2_siedend * m_ORC, (h2_siedend + (h2 - h2_siedend)) * m_
 y_sec_sh = np.linspace(Tlow_H, Tlow_L, 100)
 plt.plot(x_sec_sh, y_sec_sh, 'b',label="Wärmeübertrager 1")
 plt.legend()
+plt.xticks(fontsize=12)
+plt.yticks(fontsize=12)
 plt.show()
 
 eta_C = 1 - (Te_kuehlmittel1/Thoch_H)
