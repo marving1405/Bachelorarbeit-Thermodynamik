@@ -503,10 +503,3 @@ plt.show()
 T_L = (Ta_kuehlmittel1 - Te_kuehlmittel1) / np.log(Ta_kuehlmittel1/Te_kuehlmittel1)
 T_H = (Thoch_H - Thoch_L) / np.log(Thoch_H/Thoch_L)
 eta_C = 1 - T_L/T_H
-
-
-
-
-
-
-
