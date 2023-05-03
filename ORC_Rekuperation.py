@@ -45,7 +45,7 @@ d_ai = 14E-3
 d_aa = 16E-3
 A_quer = np.pi * (d_i / 2) ** 2  # m2
 
-from Test_fsolve import solveT3
+from Solver_fsolve import solveT3
 
 
 # TODO Implementieren Massenstromverhältnis
@@ -61,7 +61,7 @@ h4 = 537000
 # Kühlen ÜD -> SF
 from calculate_alpha_aw import alpha_1P_i
 from scipy.optimize import fsolve
-from Test_fsolve import solveT2_Rekuperator
+from Solver_fsolve import solveT2_Rekuperator
 p4 = p1
 lR = 2  # m
 h4_sattdampf = PropsSI('H', 'P', p4, 'Q', 1, fluid)

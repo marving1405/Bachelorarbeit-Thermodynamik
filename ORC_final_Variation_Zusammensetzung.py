@@ -1,22 +1,20 @@
 """
 Created on Thu Nov  3 16:24:32 2022
-
-@author: marvi
+@author: Marvin Gertenbach
+Dieses Skript untersucht, inwiefern sich der Einfluss eines binären zeotropen Fluidgemisches auf die Wärmeübertragung
+auswirkt und wie sich dies auf den thermischen Wirkungsgrad und die erzeugte Entropie auswirkt
 """
 import json, CoolProp.CoolProp as CP
 import numpy as np
 import matplotlib.pyplot as plt
-
 from calculate_alpha_aw import alpha_outside_tube
-from Test_fsolve import solveT_K
-
-from Test_fsolve import solver_for_WU1
-from Test_fsolve import solver_for_WU2
-from Test_fsolve import solver_for_WU3
+from Solver_fsolve import solveT_K
+from Solver_fsolve import solver_for_WU1
+from Solver_fsolve import solver_for_WU2
+from Solver_fsolve import solver_for_WU3
 from calculate_alpha_aw import alpha_1P_i
 from calculate_alpha_aw import alpha_boiling
 from calculate_alpha_aw import alpha_1P_annulus
-
 from scipy.optimize import fsolve
 from Stoffdaten_Oel_Funktionen import lambda_Oel
 from Stoffdaten_Oel_Funktionen import cp_Oel

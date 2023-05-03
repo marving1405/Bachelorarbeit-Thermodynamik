@@ -7,7 +7,7 @@ import json, CoolProp.CoolProp as CP
 import numpy as np
 import matplotlib.pyplot as plt
 from calculate_alpha_aw import alpha_inside_tube, alpha_outside_tube
-from Test_fsolve import solveT3
+from Solver_fsolve import solveT3
 from calculate_alpha_aw import alpha_1P_i
 from calculate_alpha_aw import alpha_boiling
 from calculate_alpha_aw import alpha_1P_annulus

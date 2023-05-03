@@ -3,7 +3,7 @@ from calculate_alpha_aw import alpha_1P_i, alpha_inside_tube, alpha_outside_tube
 CP.set_config_string(CP.ALTERNATIVE_REFPROP_PATH, 'C:\\Program Files (x86)\\REFPROP\\')
 from CoolProp.CoolProp import PropsSI
 import numpy as np
-from Test_fsolve import solveT2_Rekuperator
+from Solver_fsolve import solveT2_Rekuperator
 
 
 fluid = "REFPROP::PROPANE"

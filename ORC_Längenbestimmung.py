@@ -1,7 +1,10 @@
 """
 Created on Thu Nov  3 16:24:32 2022
-
 @author: Marvin Gertenbach
+
+Dieses Skript berechnet die Längen der Wärmeübertrager des ORCs anhand der oben definierten
+repräsentativen Sekundärfluidmassenströmen
+Diese Längen werden in den anderen Skripten festgelegt
 """
 import json, CoolProp.CoolProp as CP
 import numpy as np

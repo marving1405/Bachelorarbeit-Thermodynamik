@@ -8,8 +8,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 from calculate_alpha_aw import alpha_inside_tube, alpha_outside_tube
-from Test_fsolve import solveT3
-from Test_fsolve import solveT
+from Solver_fsolve import solveT3
+from Solver_fsolve import solveT
 from calculate_alpha_aw import alpha_1P_i
 from calculate_alpha_aw import alpha_boiling
 from calculate_alpha_aw import alpha_1P_annulus

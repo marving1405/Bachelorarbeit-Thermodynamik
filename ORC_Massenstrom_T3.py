@@ -1,16 +1,18 @@
 """
 Created on Thu Nov  3 16:24:32 2022
-
 @author: Marvin Gertenbach
+
+Dieses Skript variiert die Überhitzungstemperatur des Prozesses zur Teillastuntersuchung
+Wahlweise kann im Schleifenkopf auch der Prozessmassenstrom eingesetzt werden und dieser kann variiert werden
 """
 import json, CoolProp.CoolProp as CP
 import numpy as np
 import matplotlib.pyplot as plt
 from calculate_alpha_aw import alpha_outside_tube
-from Test_fsolve import solveT_K
-from Test_fsolve import solver_for_WU1
-from Test_fsolve import solver_for_WU2
-from Test_fsolve import solver_for_WU3
+from Solver_fsolve import solveT_K
+from Solver_fsolve import solver_for_WU1
+from Solver_fsolve import solver_for_WU2
+from Solver_fsolve import solver_for_WU3
 from calculate_alpha_aw import alpha_1P_i
 from calculate_alpha_aw import alpha_boiling
 from calculate_alpha_aw import alpha_1P_annulus
