@@ -4,7 +4,7 @@ Created on Thu Nov  3 16:24:32 2022
 
 Dieses Skript berechnet die Längen der Wärmeübertrager des ORCs anhand der oben definierten
 repräsentativen Sekundärfluidmassenströmen
-Diese Längen werden in den anderen Skripten festgelegt
+Diese Längen werden in den anderen Skripten als konstant festgelegt
 """
 import json, CoolProp.CoolProp as CP
 import numpy as np
@@ -42,16 +42,18 @@ Pumpe: Zustand 1 so anpassen, dass Fluid bei gewünschtem Druck unterkühlt vorl
 """
 p1 = 100000  # Pa
 T1 = 229  # Kelvin
-etaP = 0.9  # wird hier als konstant angesehen
+etaP = 0.9  # isentroper Pumpenwirkungsgrad der Pumpe, wird hier als konstant angesehen
 
 h1 = CP.PropsSI('H', 'T', T1, 'P', p1, fluid)
 p2 = 2000000  # Pa
 v1 = 1 / (CP.PropsSI('D', 'P', p1, 'T', T1, fluid))  # m3/kg
 
+# Auslegung der Pumpe
 w_p = (v1 * (p2 - p1)) / etaP # J
 P_p = (w_p * m_ORC)
 h2 = w_p + h1
 T2 = CP.PropsSI('T', 'H', h2, 'P', p2, fluid)
+# Zustand 2 muss sich im Einphasengebiet befinden
 if CP.PhaseSI('H', h2, 'P', p2, fluid) == 'twophase':
     raise ValueError("no liquid state at pump outlet!")
 
@@ -114,8 +116,9 @@ dPsat = CP.PropsSI('P', 'T', T2_siedend, 'Q', 0, fluid) - CP.PropsSI('P', 'T', T
 alpha_i_zweiphasig = alpha_boiling(m_ORC, 0.5, d_i, rho2_siedend, rho2_sattdampf, viscosity2_liq, viscosity2_gas, lambda_fluid_2, cp2_liq, h_v, sigma, dPsat, Te)
 alpha_a_2 = alpha_outside_tube(d_ai, d_aa, lambda_Oel)
 cp_Oel = 2.2 # in kJ/kg, konstant angenommen
-Tmittel_H = Tmittel_L + ((Q_zu2 / 1000) / (m_OEL_2 * cp_Oel))
+Tmittel_H = Tmittel_L + ((Q_zu2 / 1000) / (m_OEL_2 * cp_Oel)) # Berechnung des unbekannten Temperaturniveaus der Wärmespeicher
 
+# Definition der Temperaturdifferenzen zur Längenberechnung anhand der LMTD-Methode
 dTA_2 = Tmittel_L - T2_siedend
 dTB_2 = Tmittel_H - T2_sattdampf
 
@@ -154,7 +157,7 @@ l3 = (Q_zu3 * R_ges3) / ((dTA_3 - dTB_3) / np.log(dTA_3 / dTB_3))
 Q_zu_ges = Q_zu1 + Q_zu2 + Q_zu3
 
 '''
-Überprüfung Strömungsgeschwindigkeit
+Überprüfung Strömungsgeschwindigkeit des Prozessfluides
 '''
 rho3 = CP.PropsSI('D', 'T', T3, 'P', p2, fluid)
 v_3 = m_ORC / rho3
@@ -180,11 +183,11 @@ T4 = CP.PropsSI("T", "H", h4, "P", p1, fluid)
 Kondensator 1, ÜD -> SF, Kühlmedium R23
 '''
 kuehlmittel1 = "REFPROP::R23"
-p_Kuehlmittel1 = 1500000  # Pa
+p_Kuehlmittel1 = 1500000  # Pa, Definition des Druckniveaus des thermischen Speichers
 h4_siedend = CP.PropsSI('H', 'P', p4, 'Q', 0, fluid)
 T4_siedend = CP.PropsSI('T', 'P', p4, 'H', h4_siedend, fluid)
 Q_ab1 = m_ORC * (h4 - h1)
-Ta_kuehlmittel1 = T4 - 75 #Temperaturdifferenz anpassen!
+Ta_kuehlmittel1 = T4 - 75 # Austrittstemperatur so, dass Temperatur stets unterhalb der Prozesstemperaturen
 ha_kuehlmittel1 = CP.PropsSI('H', 'P', p_Kuehlmittel1, 'T', Ta_kuehlmittel1, kuehlmittel1)
 he_kuehlmittel1 = ha_kuehlmittel1 - (Q_ab1 / m_Kuehlmittel1)
 Te_kuehlmittel1 = CP.PropsSI('T', 'P', p_Kuehlmittel1, 'H', he_kuehlmittel1, kuehlmittel1)
